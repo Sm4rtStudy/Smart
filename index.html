@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStudy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fcfbf8;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Modo Oscuro */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .login-container,
+        body.dark-mode .course-card,
+        body.dark-mode .header,
+        body.dark-mode .course-header-nav {
+            background: #242424;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .logo-section h1,
+        body.dark-mode .course-title-main,
+        body.dark-mode .hero-title,
+        body.dark-mode .course-title,
+        body.dark-mode .topic-title,
+        body.dark-mode .logo-text {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .subtitle,
+        body.dark-mode .hero-subtitle,
+        body.dark-mode .course-description,
+        body.dark-mode .topic-description,
+        body.dark-mode .nav-link,
+        body.dark-mode .breadcrumb {
+            color: #aaa;
+        }
+
+        body.dark-mode .form-group input {
+            background: #333;
+            border-color: #444;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .form-group input:focus {
+            background: #3a3a3a;
+            border-color: #f7b602;
+        }
+
+        body.dark-mode .form-group label {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .tab {
+            background: #333;
+            color: #aaa;
+        }
+
+        body.dark-mode .tab:hover {
+            background: #444;
+        }
+
+        body.dark-mode .course-footer {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .theme-toggle,
+        body.dark-mode .logout-btn {
+            background: #333;
+        }
+
+        body.dark-mode .theme-toggle:hover,
+        body.dark-mode .logout-btn:hover {
+            background: #f7b602;
+        }
+
+        body.dark-mode .header,
+        body.dark-mode .course-header-nav {
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .top-nav {
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .tabs-nav {
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .btn-secondary {
+            background: #333;
+            border-color: #444;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            border-color: #f7b602;
+            color: #f7b602;
+        }
+
+        body.dark-mode .video-container {
+            background: #333;
+        }
+
+        body.dark-mode .dropdown-content {
+            background: #242424;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .dropdown-item {
+            color: #aaa;
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background: #f7b602;
+            color: #1a1a1a;
+        }
+
+        body.dark-mode .course-card {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .course-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .breadcrumb a {
+            color: #f7b602;
+        }
+
+        /* ========== PÁGINA DE LOGIN ========== */
+        .login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 60px 50px;
+            max-width: 500px;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-section h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: #f5f5f5;
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #ffe8b3;
+        }
+
+        .tab.active {
+            background: #f7b602;
+            color: #2c2c2c;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2c2c2c;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f7b602;
+            background: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: #f7b602;
+            color: #2c2c2c;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #e5a600;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(247, 182, 2, 0.3);
+        }
+
+        #student-fields {
+            display: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        /* ========== DASHBOARD PAGE ========== */
+        .dashboard-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #f7b602;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle, .logout-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .theme-toggle:hover, .logout-btn:hover {
+            background: #f7b602;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .course-content {
+            padding: 40px 32px;
+        }
+
+        .course-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .course-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(247, 182, 2, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .course-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .course-description {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .course-footer {
+            padding: 24px 32px;
+            background: #fafafa;
+        }
+
+        .explore-btn {
+            width: 100%;
+            padding: 16px;
+            background: #f7b602;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .explore-btn:hover {
+            background: #e5a600;
+        }
+
+        /* ========== COURSE DETAIL PAGE ========== */
+        .course-detail-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .course-header-nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #f7b602;
+        }
+
+        /* Dropdown de cursos */
+        .courses-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+            z-index: 1000;
+        }
+
+        .courses-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #f7b602;
+            color: #1a1a1a;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f7b602;
+        }
+
+        .breadcrumb {
+            padding: 20px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #f7b602;
+            text-decoration: none;
+        }
+
+        .course-detail-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 40px 80px;
+        }
+
+        .course-title-main {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 32px;
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 40px;
+        }
+
+        .tab-link {
+            padding: 12px 0;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-link.active {
+            color: #f7b602;
+            border-bottom-color: #f7b602;
+        }
+
+        .topic-section {
+            margin-bottom: 60px;
+        }
+
+        .topic-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #e5e5e5;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .video-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #666;
+        }
+
+        .topic-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 14px 24px;
+            background: #f7b602;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #e5a600;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px 24px;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #f7b602;
+            color: #f7b602;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 42px;
+            }
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-content, .course-detail-content {
+                padding: 40px 20px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== LOGIN PAGE ========== -->
+    <div class="login-page" id="login-page">
+        <div class="login-container">
+            <div class="logo-section">
+                <h1>SmartStudy</h1>
+                <p class="subtitle">Refuerza tus conocimientos en Matemática, Física y Química</p>
+            </div>
+            <div class="role-tabs">
+                <button class="tab active" id="admin-tab">Administrador</button>
+                <button class="tab" id="student-tab">Estudiante</button>
+            </div>
+            <div class="error-message" id="error-message"></div>
+            <form id="login-form">
+                <div id="admin-fields">
+                    <div class="form-group">
+                        <label for="admin-email">Correo</label>
+                        <input type="email" id="admin-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Contraseña</label>
+                        <input type="password" id="admin-password" placeholder="Enter your password">
+                    </div>
+                </div>
+                <div id="student-fields">
+                    <div class="form-group">
+                        <label for="student-name">Nombre Completo</label>
+                        <input type="text" id="student-name" placeholder="Ingresa tu nombre completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="student-code">Código de Estudiante</label>
+                        <input type="text" id="student-code" placeholder="Ingresa tu código alfanumérico">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== DASHBOARD PAGE ========== -->
+    <div class="dashboard-page" id="dashboard-page">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-header">
+                    <div class="logo-icon">🎓</div>
+                    <span class="logo-text">SmartStudy</span>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle"><img src="claro.png" width="32" height="32" alt=""/></button>
+                    <button class="logout-btn" onclick="logout()" title="Cerrar Sesión"><img src="salir.png" width="32" height="32" alt=""/></button>
+                </div>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="hero-section">
+                <h2 class="hero-title">Cursos Disponibles</h2>
+                <p class="hero-subtitle">En esta sección puedes acceder a los recursos de: Matemáticas, Física y Química.</p>
+            </div>
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="course-content">
+                        <div class="course-header">
+                            <div class="course-icon"><img src="Mate.png" width="48" height="48" alt=""/></div>
+                            <h3 class="course-title">Matemáticas</h3>
+                        </div>
+                        <p class="course-description">Domina los conceptos fundamentales y avanzados de las matemáticas.</p>
+                    </div>
+                    <div class="course-footer">
+                        <button class="explore-btn" onclick="showCourse('matematicas')">
+                            <span>Explorar Curso</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-content">
+                        <div class="course-header">
+                            <div class="course-icon"><img src="Fisi.png" width="46" height="46" alt=""/></div>
+                            <h3 class="course-title">Física</h3>
+                        </div>
+                        <p class="course-description">Descubre las leyes que rigen el universo y sus fenómenos.</p>
+                    </div>
+                    <div class="course-footer">
+                        <button class="explore-btn" onclick="showCourse('fisica')">
+                            <span>Explorar Curso</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="course-content">
+                        <div class="course-header">
+                            <div class="course-icon"><img src="Quim.png" width="48" height="48" alt=""/></div>
+                            <h3 class="course-title">Química</h3>
+                        </div>
+                        <p class="course-description">Explora la composición, estructura, propiedades y reacciones de la materia.</p>
+                    </div>
+                    <div class="course-footer">
+                        <button class="explore-btn" onclick="showCourse('quimica')">
+                            <span>Explorar Curso</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========== COURSE DETAIL PAGE ========== -->
+    <div class="course-detail-page" id="course-detail-page">
+        <header class="course-header-nav">
+            <div class="nav-container">
+                <div class="top-nav">
+                    <div class="logo-header">
+                        <div class="logo-icon">🎓</div>
+                        <span class="logo-text">SmartStudy</span>
+                    </div>
+                    <div class="nav-links">
+                        <a href="#" class="nav-link" onclick="backToDashboard(); return false;">Inicio</a>
+                        <div class="courses-dropdown">
+                            <a href="#" class="nav-link" style="color: #f7b602;">Cursos ▾</a>
+                            <div class="dropdown-content">
+                                <div class="dropdown-item" onclick="showCourse('matematicas')"><img src="Mate.png" width="13" height="13" alt=""/> Matemáticas</div>
+                                <div class="dropdown-item" onclick="showCourse('fisica')"><img src="Fisi.png" width="12" height="12" alt=""/> Física</div>
+                                <div class="dropdown-item" onclick="showCourse('quimica')"><img src="Quim.png" width="13" height="13" alt=""/> Química</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-section">
+                        <button class="theme-toggle"><img src="claro.png" width="32" height="32" alt=""/></button>
+                        <button class="logout-btn" onclick="logout()" title="Cerrar Sesión"><img src="salir.png" width="32" height="32" alt=""/></button>
+                    </div>
+                </div>
+                <div class="breadcrumb">
+                    <a href="#" onclick="backToDashboard()">Cursos</a> / <span id="course-name-breadcrumb">Matemática</span>
+                </div>
+            </div>
+        </header>
+        <main class="course-detail-content">
+            <h1 class="course-title-main" id="course-name-title">Matemática</h1>
+            <div class="tabs-nav">
+                <div class="tab-link active">Temas</div>
+                <div class="tab-link">Laboratorios</div>
+                <div class="tab-link">Proyectos</div>
+            </div>
+            
+            <div id="course-topics"></div>
+        </main>
+    </div>
+
+    <script>
+        // Credenciales
+        const adminCredentials = [
+            { email: 'julian.diaz@upn.edu.pe', password: 'Docente_quim2025', course: 'Química', name: 'Julian Ricardo Diaz Ruiz' },
+            { email: 'luis.carmona@upn.edu.pe', password: 'Docente_mate2025', course: 'Matemática', name: 'Luis Alberto Carmona Castrejon' },
+            { email: 'yamil.minez@upn.edu.pe', password: 'Docente_fisi2025', course: 'Física', name: 'Yamil Zenefelder Minez Cuba' }
+        ];
+
+        // Contenido de los cursos
+        const coursesContent = {
+            matematicas: {
+                name: 'Matemática',
+                topics: [
+                    {
+                        title: 'Tema 1: Introducción al Cálculo',
+                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Calculo',
+                        description: 'El cálculo es una rama de las matemáticas que se centra en el estudio del cambio y la acumulación. Se divide en dos áreas principales: cálculo diferencial, que se ocupa de las tasas de cambio y las pendientes de las curvas, y cálculo integral, que se ocupa de la acumulación de cantidades y las áreas bajo las curvas. El cálculo tiene aplicaciones en una amplia gama de campos, incluyendo la física, la ingeniería, la economía y la informática.'
+                    },
+                    {
+                        title: 'Tema 2: Límites y Continuidad',
+                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Limites',
+                        description: 'Los límites son un concepto fundamental en el cálculo que describe el comportamiento de una función a medida que su entrada se acerca a un cierto valor. La continuidad se refiere a la propiedad de una función de no tener interrupciones o saltos en su gráfica. Estos conceptos son esenciales para comprender el comportamiento de las funciones y son la base para el estudio de las derivadas e integrales.'
+                    },
+                    {
+                        title: 'Tema 3: Derivadas',
+                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Derivadas',
+                        description: 'La derivada de una función mide la tasa de cambio instantánea de la función con respecto a su entrada. Geométricamente, la derivada representa la pendiente de la línea tangente a la gráfica de la función en un punto dado. Las derivadas tienen numerosas aplicaciones, incluyendo la optimización de funciones, el análisis de movimiento y la resolución de ecuaciones diferenciales.'
+                    }
+                ]
+            },
+            fisica: {
+                name: 'Física',
+                topics: [
+                    {
+                        title: 'Tema 1: Cinemática',
+                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Cinematica',
+                        description: 'La cinemática es la rama de la física que estudia el movimiento de los objetos sin considerar las causas que lo producen. Se enfoca en describir la posición, velocidad y aceleración de los cuerpos en función del tiempo. Conceptos fundamentales incluyen el desplazamiento, la trayectoria, y las ecuaciones del movimiento rectilíneo uniforme y uniformemente acelerado.'
+                    },
+                    {
+                        title: 'Tema 2: Dinámica',
+                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Dinamica',
+                        description: 'La dinámica estudia las causas del movimiento, es decir, las fuerzas y su relación con el movimiento de los cuerpos. Las leyes de Newton son fundamentales en esta área: la ley de inercia, la ley de fuerza y aceleración, y la ley de acción y reacción. Estas leyes permiten analizar y predecir el comportamiento de sistemas mecánicos complejos.'
+                    },
+                    {
+                        title: 'Tema 3: Energía y Trabajo',
+                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Energia',
+                        description: 'El trabajo y la energía son conceptos interrelacionados en física. El trabajo se define como la transferencia de energía cuando una fuerza actúa sobre un objeto y lo desplaza. La energía puede presentarse en diversas formas: cinética, potencial, térmica, entre otras. El principio de conservación de la energía establece que la energía total de un sistema aislado permanece constante.'
+                    }
+                ]
+            },
+            quimica: {
+                name: 'Química',
+                topics: [
+                    {
+                        title: 'Tema 1: Estructura Atómica',
+                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Atomica',
+                        description: 'La estructura atómica describe la organización y comportamiento de las partículas subatómicas que componen los átomos: protones, neutrones y electrones. El modelo atómico moderno explica cómo los electrones se distribuyen en niveles de energía o capas alrededor del núcleo. Esta estructura determina las propiedades químicas de los elementos y su comportamiento en las reacciones químicas.'
+                    },
+                    {
+                        title: 'Tema 2: Enlaces Químicos',
+                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Enlaces',
+                        description: 'Los enlaces químicos son las fuerzas de atracción que mantienen unidos a los átomos en las moléculas y compuestos. Existen tres tipos principales: enlaces iónicos (transferencia de electrones), enlaces covalentes (compartición de electrones) y enlaces metálicos. La naturaleza del enlace determina las propiedades físicas y químicas de las sustancias, como punto de fusión, solubilidad y conductividad.'
+                    },
+                    {
+                        title: 'Tema 3: Reacciones Químicas',
+                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Reacciones',
+                        description: 'Las reacciones químicas son procesos en los que las sustancias se transforman en otras diferentes mediante la ruptura y formación de enlaces químicos. Se clasifican en diversos tipos: síntesis, descomposición, sustitución y doble sustitución. Las ecuaciones químicas balanceadas representan estos cambios, respetando la ley de conservación de la masa. Los factores que afectan la velocidad de reacción incluyen temperatura, concentración y catalizadores.'
+                    }
+                ]
+            }
+        };
+
+        let currentRole = 'admin';
+
+        // Login handlers
+        document.getElementById('admin-tab').addEventListener('click', () => {
+            document.getElementById('admin-tab').classList.add('active');
+            document.getElementById('student-tab').classList.remove('active');
+            document.getElementById('admin-fields').style.display = 'block';
+            document.getElementById('student-fields').style.display = 'none';
+            currentRole = 'admin';
+        });
+
+        document.getElementById('student-tab').addEventListener('click', () => {
+            document.getElementById('student-tab').classList.add('active');
+            document.getElementById('admin-tab').classList.remove('active');
+            document.getElementById('student-fields').style.display = 'block';
+            document.getElementById('admin-fields').style.display = 'none';
+            currentRole = 'student';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const errorMessage = document.getElementById('error-message');
+
+            if (currentRole === 'admin') {
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                const admin = adminCredentials.find(c => c.email === email && c.password === password);
+
+                if (admin) {
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('dashboard-page').style.display = 'block';
+                } else {
+                    errorMessage.textContent = 'Correo o contraseña incorrectos';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => errorMessage.style.display = 'none', 3000);
+                }
+            } else {
+                const name = document.getElementById('student-name').value.trim();
+                const code = document.getElementById('student-code').value.trim();
+
+                if (name && code) {
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('dashboard-page').style.display = 'block';
+                } else {
+                    errorMessage.textContent = 'Por favor completa todos los campos';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => errorMessage.style.display = 'none', 3000);
+                }
+            }
+        });
+
+        // Mostrar curso
+        function showCourse(courseId) {
+            const course = coursesContent[courseId];
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('course-detail-page').style.display = 'block';
+            document.getElementById('course-name-breadcrumb').textContent = course.name;
+            document.getElementById('course-name-title').textContent = course.name;
+
+            const topicsContainer = document.getElementById('course-topics');
+            topicsContainer.innerHTML = course.topics.map(topic => `
+                <div class="topic-section">
+                    <h2 class="topic-title">${topic.title}</h2>
+                    <div class="video-container">
+                        <img src="${topic.video}" alt="${topic.title}">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <p class="topic-description">${topic.description}</p>
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="openQuiz('${courseId}', '${topic.title}')">Cuestionario Interactivo</button>
+                        <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor Inteligente</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Volver al dashboard
+        function backToDashboard() {
+            document.getElementById('course-detail-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'block';
+        }
+
+        // Abrir cuestionario
+        function openQuiz(courseId, topicTitle) {
+            alert(`Cuestionario Interactivo: ${topicTitle}\n\nPróximamente: Sistema de cuestionarios con preguntas de opción múltiple y retroalimentación inmediata.`);
+        }
+
+        // Abrir tutor inteligente
+        function openTutor(courseId, topicTitle) {
+            alert(`Tutor Inteligente: ${topicTitle}\n\nPróximamente: Chat con IA para resolver dudas sobre el tema.`);
+        }
+
+        // Cerrar sesión
+        function logout() {
+            if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+                // Ocultar páginas
+                document.getElementById('dashboard-page').style.display = 'none';
+                document.getElementById('course-detail-page').style.display = 'none';
+                
+                // Limpiar formularios
+                document.getElementById('login-form').reset();
+                
+                // Mostrar página de login
+                document.getElementById('login-page').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>
