@@ -749,10 +749,6 @@
 	</script>
 
 		
-  <script>
-    // URL del Web App de Apps Script para validar administradores
-    const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbzbD2anbwkFp3BOwwg8XclM34mmwX91eqR9RV0habYSihLHndRRWuAoSHkWcQj-10x6IQ/exec";
-  </script>
 </head>
 <body>
     <!-- ========== LOGIN PAGE ========== -->
@@ -905,6 +901,12 @@
 
     <script>
         // Credenciales
+        const adminCredentials = [
+            { email: 'julian.diaz@upn.edu.pe', password: 'Docente_quim2025', course: 'Química', name: 'Julian Ricardo Diaz Ruiz' },
+            { email: 'luis.carmona@upn.edu.pe', password: 'Docente_mate2025', course: 'Matemática', name: 'Luis Alberto Carmona Castrejon' },
+            { email: 'yamil.minez@upn.edu.pe', password: 'Docente_fisi2025', course: 'Física', name: 'Yamil Zenefelder Minez Cuba' }
+        ];
+
         // Contenido de los cursos
         const coursesContent = {
             matematicas: {
@@ -1139,32 +1141,15 @@
             e.preventDefault();
             const errorMessage = document.getElementById('error-message');
 
-            
-if (currentRole === 'admin') {
-  const errorMessage = document.getElementById('error-message') || { style: {}, textContent: '' };
-  const email = (document.getElementById('admin-email')?.value || '').trim();
-  const password = (document.getElementById('admin-password')?.value || '').trim();
-  if (!email || !password) {
-    if (errorMessage) {
-      errorMessage.textContent = 'Completa correo y contraseña';
-      errorMessage.style.display = 'block';
-      setTimeout(() => errorMessage.style.display = 'none', 2500);
-    }
-    return;
-  }
-  const data = await loginAdminRemoto(email, password);
-  if (data && data.ok) {
-    localStorage.setItem('smartstudy-admin', JSON.stringify(data.admin || { email }));
-    document.getElementById('login-page').style.display = 'none';
-    document.getElementById('dashboard-page').style.display = 'block';
-  } else {
-    if (errorMessage) {
-      errorMessage.textContent = (data && data.error) ? data.error : 'Correo o contraseña incorrectos';
-      errorMessage.style.display = 'block';
-      setTimeout(() => errorMessage.style.display = 'none', 3000);
-    }
-  }
-} else {
+            if (currentRole === 'admin') {
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                const admin = adminCredentials.find(c => c.email === email && c.password === password);
+
+                if (admin) {
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('dashboard-page').style.display = 'block';
+                } else {
                     errorMessage.textContent = 'Correo o contraseña incorrectos';
                     errorMessage.style.display = 'block';
                     setTimeout(() => errorMessage.style.display = 'none', 3000);
@@ -1272,20 +1257,5 @@ if (currentRole === 'admin') {
 	</script>
 
 	
-<script>
-async function loginAdminRemoto(email, password) {
-  try {
-    const resp = await fetch(LOGIN_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await resp.json().catch(() => ({ ok:false, error:"Respuesta no válida del servidor" }));
-    return data;
-  } catch (err) {
-    return { ok:false, error: String(err) };
-  }
-}
-</script>
 </body>
 </html>
