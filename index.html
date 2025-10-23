@@ -449,7 +449,7 @@
         }
 
         .explore-btn:hover {
-            background: #e5a600;
+            background: #f79502;
         }
 
         /* ========== COURSE DETAIL PAGE ========== */
@@ -809,6 +809,8 @@
                 <h2 class="hero-title">Explora y Aprende</h2>
                 <p class="hero-subtitle">En esta sección puedes acceder a los recursos de Matemática, Física y Química, con videos explicativos, autoevaluaciones interactivas y el apoyo de tu tutor IA, que te acompaña paso a paso para comprender y aplicar cada concepto en la ingeniería y la vida real.</p>
             </div>
+			
+	
             <div class="courses-grid">
                 <div class="course-card">
                     <div class="course-content">
@@ -857,7 +859,13 @@
                 </div>
             </div>
         </main>
+				<div id="admin-download" style="display:none; text-align:center; margin-top:40px;">
+				<button class="explore-btn" onclick="descargarRegistro()">
+					<span>💾 Descargar registro de actividad</span>
+				</button>
+				</div>
     </div>
+	
 
     <!-- ========== COURSE DETAIL PAGE ========== -->
     <div class="course-detail-page" id="course-detail-page">
@@ -1118,7 +1126,10 @@
 
 		
 		
-        let currentRole = 'student';
+        
+        let IS_ADMIN = false; // bandera global para rol admin
+
+let currentRole = 'student';
 
         // Login handlers
         document.getElementById('admin-tab').addEventListener('click', () => {
@@ -1149,7 +1160,11 @@
                 if (admin) {
                     document.getElementById('login-page').style.display = 'none';
                     document.getElementById('dashboard-page').style.display = 'block';
-                } else {
+                
+                    IS_ADMIN = true;
+                    const adminBox = document.getElementById('admin-download');
+                    if (adminBox) adminBox.style.display = 'block';
+} else {
                     errorMessage.textContent = 'Correo o contraseña incorrectos';
                     errorMessage.style.display = 'block';
                     setTimeout(() => errorMessage.style.display = 'none', 3000);
@@ -1161,7 +1176,11 @@
                 if (name && code) {
                     document.getElementById('login-page').style.display = 'none';
                     document.getElementById('dashboard-page').style.display = 'block';
-                } else {
+                
+                    IS_ADMIN = false;
+                    const adminBox = document.getElementById('admin-download');
+                    if (adminBox) adminBox.style.display = 'none';
+} else {
                     errorMessage.textContent = 'Por favor completa todos los campos';
                     errorMessage.style.display = 'block';
                     setTimeout(() => errorMessage.style.display = 'none', 3000);
@@ -1178,20 +1197,28 @@
             document.getElementById('course-name-title').textContent = course.name;
 
             const topicsContainer = document.getElementById('course-topics');
-            topicsContainer.innerHTML = course.topics.map(topic => `
-                <div class="topic-section">
+            
+            topicsContainer.innerHTML = course.topics.map(topic => {
+                const primaryLabel = IS_ADMIN ? 'Resultados' : 'Autoevaluación';
+                const primaryOnClick = IS_ADMIN
+                  ? `openResults('${courseId}', '${topic.title}')`
+                  : `openQuiz('${courseId}', '${topic.title}')`;
+                return `
+                  <div class="topic-section">
                     <h2 class="topic-title">${topic.title}</h2>
                     <div class="video-container">
-                        ${topic.iframe ? topic.iframe : `<img src="${topic.video}" alt="${topic.title}"><div class="play-button">▶</div>`}
+                      ${topic.iframe ? topic.iframe : `<img src="${topic.video}" alt="${topic.title}"><div class="play-button">▶</div>`}
                     </div>
                     ${topic.description ? `<p class="topic-description">${topic.description}</p>` : ''}
                     <div class="action-buttons">
-                        <button class="btn-primary" onclick="openQuiz('${courseId}', '${topic.title}')">Autoevaluación</button>
-                        <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor GPT</button>
+                      <button class="btn-primary" onclick="${primaryOnClick}">${primaryLabel}</button>
+                      <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor GPT</button>
                     </div>
-                </div>
-            `).join('');
+                  </div>
+                `;
+            }).join('');
             if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
+    if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
         }
 
         // Volver al dashboard
@@ -1212,6 +1239,27 @@
 			alert('No hay tutor configurado para este curso.');
 			return;
 		  }
+
+        // Abrir resultados (solo admin): apunta a URLs de Drive por curso
+        function openResults(courseId, topicTitle) {
+            const driveResults = {
+                matematicas: 'https://drive.google.com/your-math-results',
+                fisica: 'https://drive.google.com/your-physics-results',
+                quimica: 'https://drive.google.com/your-chem-results'
+            };
+            const url = driveResults[courseId];
+            if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } else {
+                alert('Resultados no configurados aún para este curso.');
+            }
+        }
+
+        // Descargar registro de actividad (panel admin)
+        function descargarRegistro() {
+            const url = 'https://drive.google.com/your-admin-activity-export';
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
 		  window.open(url, '_blank', 'noopener,noreferrer');
 		}
 
