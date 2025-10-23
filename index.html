@@ -749,6 +749,10 @@
 	</script>
 
 		
+  <script>
+    // URL del Web App de Apps Script para validar administradores
+    const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbzbD2anbwkFp3BOwwg8XclM34mmwX91eqR9RV0habYSihLHndRRWuAoSHkWcQj-10x6IQ/exec";
+  </script>
 </head>
 <body>
     <!-- ========== LOGIN PAGE ========== -->
@@ -900,19 +904,7 @@
     </div>
 
     <script>
-            // === Login remoto de Administradores (Google Apps Script) ===
-    const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbzGjH7FjU0R3U4s-06MWbi8lK2q9vTY-pZ5OKwk01mqO7mXha90KF46cpgsxAumkKVb/exec";
-
-    async function loginAdminRemoto(email, password) {
-        const resp = await fetch(LOGIN_API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await resp.json();
-        return data; // { ok: true/false, nombre?, curso?, error? }
-    }
-
+        // Credenciales
         // Contenido de los cursos
         const coursesContent = {
             matematicas: {
@@ -1143,32 +1135,41 @@
             currentRole = 'student';
         });
 
-        document.getElementById('login-form').addEventListener('submit', async (e)=>{
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const errorMessage = document.getElementById('error-message');
 
-            if (currentRole === 'admin') {
-    const email = document.getElementById('admin-email').value.trim();
-    const password = document.getElementById('admin-password').value.trim();
-    try {
-        const res = await loginAdminRemoto(email, password);
-        if (res.ok) {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('dashboard-page').style.display = 'block';
-            const lbl = document.getElementById('admin-name');
-            if (lbl) lbl.textContent = (res.nombre || '') + (res.curso ? ' - ' + res.curso : '');
-        } else {
-            errorMessage.textContent = res.error || 'Correo o contraseña incorrectos';
-            errorMessage.style.display = 'block';
-            setTimeout(() => errorMessage.style.display = 'none', 3000);
-        }
-    } catch (err) {
-        console.error(err);
-        errorMessage.textContent = 'Error de conexión. Verifica tu red o la API.';
-        errorMessage.style.display = 'block';
-        setTimeout(() => errorMessage.style.display = 'none', 3000);
+            
+if (currentRole === 'admin') {
+  const errorMessage = document.getElementById('error-message') || { style: {}, textContent: '' };
+  const email = (document.getElementById('admin-email')?.value || '').trim();
+  const password = (document.getElementById('admin-password')?.value || '').trim();
+  if (!email || !password) {
+    if (errorMessage) {
+      errorMessage.textContent = 'Completa correo y contraseña';
+      errorMessage.style.display = 'block';
+      setTimeout(() => errorMessage.style.display = 'none', 2500);
     }
+    return;
+  }
+  const data = await loginAdminRemoto(email, password);
+  if (data && data.ok) {
+    localStorage.setItem('smartstudy-admin', JSON.stringify(data.admin || { email }));
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard-page').style.display = 'block';
+  } else {
+    if (errorMessage) {
+      errorMessage.textContent = (data && data.error) ? data.error : 'Correo o contraseña incorrectos';
+      errorMessage.style.display = 'block';
+      setTimeout(() => errorMessage.style.display = 'none', 3000);
+    }
+  }
 } else {
+                    errorMessage.textContent = 'Correo o contraseña incorrectos';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => errorMessage.style.display = 'none', 3000);
+                }
+            } else {
                 const name = document.getElementById('student-name').value.trim();
                 const code = document.getElementById('student-code').value.trim();
 
@@ -1271,6 +1272,20 @@
 	</script>
 
 	
+<script>
+async function loginAdminRemoto(email, password) {
+  try {
+    const resp = await fetch(LOGIN_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await resp.json().catch(() => ({ ok:false, error:"Respuesta no válida del servidor" }));
+    return data;
+  } catch (err) {
+    return { ok:false, error: String(err) };
+  }
+}
+</script>
 </body>
 </html>
-
