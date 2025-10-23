@@ -263,9 +263,9 @@
             box-shadow: 0 5px 20px rgba(247, 182, 2, 0.3);
         }
 
-        #student-fields {
-            display: none;
-        }
+        #student-fields { display: block; }
+        #admin-fields { display: none; }
+       
 
         .error-message {
             background: #fee;
@@ -508,13 +508,16 @@
             min-width: 200px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            margin-top: 10px;
+            margin-top: 0;
+    		transform: none;
             z-index: 1000;
         }
 
-        .courses-dropdown:hover .dropdown-content {
-            display: block;
-        }
+		/* .courses-dropdown:hover .dropdown-content,
+		.courses-dropdown:focus-within .dropdown-content {
+    		display: block;
+		}
+		*/
 
         .dropdown-item {
             padding: 12px 20px;
@@ -698,23 +701,81 @@
                 flex-direction: column;
             }
         }
-    </style>
+    
+        /* Support embedded iframes inside video cards */
+        .video-container iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 12px;
+        }
+</style>
+
+    <!-- MathJax for rendering LaTeX equations -->
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', () => {
+	  const dropdown = document.querySelector('.courses-dropdown');
+	  const menu = dropdown.querySelector('.dropdown-content');
+	  const trigger = dropdown.querySelector('.nav-link');
+
+	  // Alterna visibilidad al hacer clic
+	  trigger.addEventListener('click', (e) => {
+		e.preventDefault();
+		menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+	  });
+
+	  // Cierra el menú si el mouse sale del área del dropdown
+	  menu.addEventListener('mouseleave', () => {
+		menu.style.display = 'none';
+	  });
+
+	  // También cierra si se hace clic fuera del menú
+	  document.addEventListener('click', (e) => {
+		if (!dropdown.contains(e.target)) {
+		  menu.style.display = 'none';
+		}
+	  });
+	});
+	</script>
+
+		
 </head>
 <body>
     <!-- ========== LOGIN PAGE ========== -->
     <div class="login-page" id="login-page">
         <div class="login-container">
             <div class="logo-section">
-                <h1>SmartStudy</h1>
-                <p class="subtitle">Refuerza tus conocimientos en Matemática, Física y Química</p>
+                <img src="Logo.png" width="256" height="256" alt=""/>
+				<h1>SmartStudy</h1>
+				<p class="subtitle">Bienvenido a Smart Study, un espacio para aprender, practicar y comprender la ciencia de forma clara y sencilla</p>
             </div>
             <div class="role-tabs">
-                <button class="tab active" id="admin-tab">Administrador</button>
-                <button class="tab" id="student-tab">Estudiante</button>
+                <button class="tab active" id="student-tab">Estudiante</button>
+				<button class="tab" id="admin-tab">Administrador</button>
             </div>
             <div class="error-message" id="error-message"></div>
             <form id="login-form">
-                <div id="admin-fields">
+                <div id="student-fields">
+                    <div class="form-group">
+                        <label for="student-name">Nombre Completo</label>
+                        <input type="text" id="student-name" placeholder="Ingresa tu nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="student-code">Código de Estudiante</label>
+                        <input type="text" id="student-code" placeholder="Ingresa tu código N000XXXXXX">
+                    </div>
+                </div>
+				<div id="admin-fields">
                     <div class="form-group">
                         <label for="admin-email">Correo</label>
                         <input type="email" id="admin-email" placeholder="Enter your email">
@@ -724,17 +785,7 @@
                         <input type="password" id="admin-password" placeholder="Enter your password">
                     </div>
                 </div>
-                <div id="student-fields">
-                    <div class="form-group">
-                        <label for="student-name">Nombre Completo</label>
-                        <input type="text" id="student-name" placeholder="Ingresa tu nombre completo">
-                    </div>
-                    <div class="form-group">
-                        <label for="student-code">Código de Estudiante</label>
-                        <input type="text" id="student-code" placeholder="Ingresa tu código alfanumérico">
-                    </div>
-                </div>
-                <button type="submit" class="submit-btn">Iniciar Sesión</button>
+               <button type="submit" class="submit-btn">Iniciar Sesión</button>
             </form>
         </div>
     </div>
@@ -744,7 +795,7 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo-header">
-                    <div class="logo-icon">🎓</div>
+                    <div class="logo-icon"><img src="Logo.png" width="24" height="24" alt=""/></div>
                     <span class="logo-text">SmartStudy</span>
                 </div>
                 <div class="header-right">
@@ -755,8 +806,8 @@
         </header>
         <main class="main-content">
             <div class="hero-section">
-                <h2 class="hero-title">Cursos Disponibles</h2>
-                <p class="hero-subtitle">En esta sección puedes acceder a los recursos de: Matemáticas, Física y Química.</p>
+                <h2 class="hero-title">Explora y Aprende</h2>
+                <p class="hero-subtitle">En esta sección puedes acceder a los recursos de Matemática, Física y Química, con videos explicativos, autoevaluaciones interactivas y el apoyo de tu tutor IA, que te acompaña paso a paso para comprender y aplicar cada concepto en la ingeniería y la vida real.</p>
             </div>
             <div class="courses-grid">
                 <div class="course-card">
@@ -765,7 +816,7 @@
                             <div class="course-icon"><img src="Mate.png" width="48" height="48" alt=""/></div>
                             <h3 class="course-title">Matemáticas</h3>
                         </div>
-                        <p class="course-description">Domina los conceptos fundamentales y avanzados de las matemáticas.</p>
+                        <p class="course-description">Domina las ideas clave de las matemáticas y descubre cómo aplicarlas para resolver retos reales. Aprende a interpretar, calcular y modelar situaciones cotidianas y de ingeniería con confianza, claridad y sentido práctico.</p>
                     </div>
                     <div class="course-footer">
                         <button class="explore-btn" onclick="showCourse('matematicas')">
@@ -780,7 +831,7 @@
                             <div class="course-icon"><img src="Fisi.png" width="46" height="46" alt=""/></div>
                             <h3 class="course-title">Física</h3>
                         </div>
-                        <p class="course-description">Descubre las leyes que rigen el universo y sus fenómenos.</p>
+                        <p class="course-description">Descubre las leyes que dan forma al mundo y entiende cómo influyen en lo que ves cada día. Comprende el movimiento, la energía y las fuerzas que hacen posible la tecnología y la ingeniería moderna.</p>
                     </div>
                     <div class="course-footer">
                         <button class="explore-btn" onclick="showCourse('fisica')">
@@ -795,7 +846,7 @@
                             <div class="course-icon"><img src="Quim.png" width="48" height="48" alt=""/></div>
                             <h3 class="course-title">Química</h3>
                         </div>
-                        <p class="course-description">Explora la composición, estructura, propiedades y reacciones de la materia.</p>
+                        <p class="course-description">Explora la materia desde una mirada curiosa y aplicada. Comprende cómo ocurren las transformaciones que sustentan la vida, la industria y la ingeniería, conectando la ciencia con lo que usas y ves a diario.</p>
                     </div>
                     <div class="course-footer">
                         <button class="explore-btn" onclick="showCourse('quimica')">
@@ -814,7 +865,7 @@
             <div class="nav-container">
                 <div class="top-nav">
                     <div class="logo-header">
-                        <div class="logo-icon">🎓</div>
+                        <div class="logo-icon"><img src="Logo.png" width="24" height="24" alt=""/></div>
                         <span class="logo-text">SmartStudy</span>
                     </div>
                     <div class="nav-links">
@@ -842,8 +893,6 @@
             <h1 class="course-title-main" id="course-name-title">Matemática</h1>
             <div class="tabs-nav">
                 <div class="tab-link active">Temas</div>
-                <div class="tab-link">Laboratorios</div>
-                <div class="tab-link">Proyectos</div>
             </div>
             
             <div id="course-topics"></div>
@@ -864,65 +913,212 @@
                 name: 'Matemática',
                 topics: [
                     {
-                        title: 'Tema 1: Introducción al Cálculo',
-                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Calculo',
-                        description: 'El cálculo es una rama de las matemáticas que se centra en el estudio del cambio y la acumulación. Se divide en dos áreas principales: cálculo diferencial, que se ocupa de las tasas de cambio y las pendientes de las curvas, y cálculo integral, que se ocupa de la acumulación de cantidades y las áreas bajo las curvas. El cálculo tiene aplicaciones en una amplia gama de campos, incluyendo la física, la ingeniería, la economía y la informática.'
+                        title: 'Suma de Funciones',
+                        iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/7ga65jt1xOg?si=wDEw7-adRxXhDKh-" title="Suma de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+                        description: `La suma de funciones combina dos funciones $f$ y $g$ sumando sus valores:
+                        $$ (f + g)(x) = f(x) + g(x) $$
+                        <br><b>Ejemplo:</b> si $f(x) = 2x + 1$ y $g(x) = x^2$, entonces
+                        $$ (f + g)(x) = x^2 + 2x + 1. $$
+                        El dominio de $(f+g)$ es la intersección de los dominios de $f$ y $g$.`
                     },
                     {
-                        title: 'Tema 2: Límites y Continuidad',
-                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Limites',
-                        description: 'Los límites son un concepto fundamental en el cálculo que describe el comportamiento de una función a medida que su entrada se acerca a un cierto valor. La continuidad se refiere a la propiedad de una función de no tener interrupciones o saltos en su gráfica. Estos conceptos son esenciales para comprender el comportamiento de las funciones y son la base para el estudio de las derivadas e integrales.'
+                        title: 'Resta de Funciones',
+                        iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/3poB1pM11dM?si=AXX20eBGUBUrADcD" title="Resta de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+                        description: `La resta de funciones se define como
+                        $$ (f - g)(x) = f(x) - g(x). $$
+                        <br><b>Ejemplo:</b> si $f(x) = x^2 + 2x$ y $g(x) = x + 1$, entonces
+                        $$ (f - g)(x) = x^2 + x - 1. $$`
                     },
                     {
-                        title: 'Tema 3: Derivadas',
-                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Derivadas',
-                        description: 'La derivada de una función mide la tasa de cambio instantánea de la función con respecto a su entrada. Geométricamente, la derivada representa la pendiente de la línea tangente a la gráfica de la función en un punto dado. Las derivadas tienen numerosas aplicaciones, incluyendo la optimización de funciones, el análisis de movimiento y la resolución de ecuaciones diferenciales.'
+                        title: 'Multiplicación de Funciones',
+                        iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/qJkRXOaatpc?si=6M2SrL1TgRNQhNdv" title="Multiplicación de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+                        description: `La multiplicación de funciones:
+                        $$ (f \\cdot g)(x) = f(x) \\cdot g(x). $$
+                        <br><b>Ejemplo:</b> si $f(x) = x - 2$ y $g(x) = \\sqrt{x}$, entonces
+                        $$ (f\\cdot g)(x) = (x - 2)\\sqrt{x}, \\quad x \\ge 0. $$`
+                    },
+                    {
+                        title: 'División de Funciones',
+                        iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/iql2R3LzaKU?si=VxdeMq9oZysO-Bpa" title="División de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+                        description: `La división de funciones:
+                        $$ \\left( \\frac{f}{g} \\right)(x) = \\frac{f(x)}{g(x)}, \\quad g(x) \\ne 0. $$
+                        <br><b>Ejemplo:</b> si $f(x) = x^2 - 1$ y $g(x) = x - 1$, entonces
+                        $$ \\frac{f(x)}{g(x)} = \\frac{x^2 - 1}{x - 1} = x + 1, \\quad x \\ne 1. $$`
+                    },
+                    {
+                        title: 'Dominio y Rango de Funciones',
+                        iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/u9FR4le6xBY?si=8rPb3cb58pQLOkS0" title="Dominio y Rango de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+                        description: `El <b>dominio</b> es el conjunto de valores de $x$ para los que $f(x)$ está definida; el <b>rango</b> es el conjunto de valores de $f(x)$. 
+                        <br><b>Ejemplo:</b> si $f(x) = \\sqrt{x - 1}$, entonces
+                        $$ \\text{Dom}(f) = [1, \\infty), \\qquad \\text{Ran}(f) = [0, \\infty). $$`
                     }
                 ]
             },
+
             fisica: {
-                name: 'Física',
-                topics: [
-                    {
-                        title: 'Tema 1: Cinemática',
-                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Cinematica',
-                        description: 'La cinemática es la rama de la física que estudia el movimiento de los objetos sin considerar las causas que lo producen. Se enfoca en describir la posición, velocidad y aceleración de los cuerpos en función del tiempo. Conceptos fundamentales incluyen el desplazamiento, la trayectoria, y las ecuaciones del movimiento rectilíneo uniforme y uniformemente acelerado.'
-                    },
-                    {
-                        title: 'Tema 2: Dinámica',
-                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Dinamica',
-                        description: 'La dinámica estudia las causas del movimiento, es decir, las fuerzas y su relación con el movimiento de los cuerpos. Las leyes de Newton son fundamentales en esta área: la ley de inercia, la ley de fuerza y aceleración, y la ley de acción y reacción. Estas leyes permiten analizar y predecir el comportamiento de sistemas mecánicos complejos.'
-                    },
-                    {
-                        title: 'Tema 3: Energía y Trabajo',
-                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Energia',
-                        description: 'El trabajo y la energía son conceptos interrelacionados en física. El trabajo se define como la transferencia de energía cuando una fuerza actúa sobre un objeto y lo desplaza. La energía puede presentarse en diversas formas: cinética, potencial, térmica, entre otras. El principio de conservación de la energía establece que la energía total de un sistema aislado permanece constante.'
-                    }
-                ]
-            },
-            quimica: {
-                name: 'Química',
-                topics: [
-                    {
-                        title: 'Tema 1: Estructura Atómica',
-                        video: 'https://via.placeholder.com/800x450/5a8fa3/ffffff?text=Video+Atomica',
-                        description: 'La estructura atómica describe la organización y comportamiento de las partículas subatómicas que componen los átomos: protones, neutrones y electrones. El modelo atómico moderno explica cómo los electrones se distribuyen en niveles de energía o capas alrededor del núcleo. Esta estructura determina las propiedades químicas de los elementos y su comportamiento en las reacciones químicas.'
-                    },
-                    {
-                        title: 'Tema 2: Enlaces Químicos',
-                        video: 'https://via.placeholder.com/800x450/8fa35a/ffffff?text=Video+Enlaces',
-                        description: 'Los enlaces químicos son las fuerzas de atracción que mantienen unidos a los átomos en las moléculas y compuestos. Existen tres tipos principales: enlaces iónicos (transferencia de electrones), enlaces covalentes (compartición de electrones) y enlaces metálicos. La naturaleza del enlace determina las propiedades físicas y químicas de las sustancias, como punto de fusión, solubilidad y conductividad.'
-                    },
-                    {
-                        title: 'Tema 3: Reacciones Químicas',
-                        video: 'https://via.placeholder.com/800x450/a35a8f/ffffff?text=Video+Reacciones',
-                        description: 'Las reacciones químicas son procesos en los que las sustancias se transforman en otras diferentes mediante la ruptura y formación de enlaces químicos. Se clasifican en diversos tipos: síntesis, descomposición, sustitución y doble sustitución. Las ecuaciones químicas balanceadas representan estos cambios, respetando la ley de conservación de la masa. Los factores que afectan la velocidad de reacción incluyen temperatura, concentración y catalizadores.'
-                    }
-                ]
-            }
+			  name: 'Física',
+			  topics: [
+				{
+				  title: 'Momento de fuerza o torque',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/SYAM2Anw_4M?si=N8AzMg5VW1wWofiw" title="Momento de fuerza o torque" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  El <b>torque</b> o <b>momento de fuerza</b> mide la tendencia de una fuerza a provocar rotación alrededor de un punto o eje.  
+				  Se define como el producto vectorial entre el vector posición y la fuerza aplicada:
+				  $$ \\vec{\\tau} = \\vec{r} \\times \\vec{F}, \\quad \\tau = r F \\sin\\theta. $$
+				  Donde:
+				  - $r$ es la distancia desde el eje de rotación hasta el punto de aplicación de la fuerza,
+				  - $F$ es la magnitud de la fuerza,
+				  - $\\theta$ el ángulo entre ambos vectores.
+
+				  Cuanto mayor sea la distancia o la fuerza, mayor será el torque.  
+				  <b>Ejemplo:</b> una llave de $r=0.25\\,\\text{m}$ con una fuerza de $80\\,\\text{N}$ perpendicular genera:
+				  $$ \\tau = 0.25 \\times 80 = 20\\,\\text{N·m}. $$
+				  El sentido del giro se determina con la regla de la mano derecha.
+				  `
+				},
+				{
+				  title: 'Segunda condición de equilibrio',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/QSMT1ztD3Tw?si=W68baqA_jOuifSsH" title="Segunda condición de equilibrio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  Un cuerpo rígido está en equilibrio rotacional cuando la suma de todos los torques es nula:
+				  $$ \\sum \\tau = 0. $$
+				  Esto implica que no hay rotación neta.  
+				  Si además se cumple el equilibrio traslacional:
+				  $$ \\sum \\vec{F} = \\vec{0}, $$
+				  entonces el cuerpo se encuentra en <b>equilibrio total</b> (sin moverse ni rotar).
+
+				  En problemas prácticos, se elige un punto de referencia (pivote) y se aplican ambas condiciones para determinar fuerzas desconocidas.
+				  `
+				},
+				{
+				  title: 'Ejercicio: segunda condición de equilibrio',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/xdEnJSl7shs?si=OqKK9S8ylfkaYSyi" title="Ejercicio segunda condición de equilibrio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  <b>Paso a paso:</b>
+				  1️⃣ Dibuja el <b>diagrama de cuerpo libre</b> con todas las fuerzas.  
+				  2️⃣ Elige un punto de giro donde aplicar $\\sum \\tau = 0$ (preferiblemente uno donde actúe una fuerza desconocida para eliminarla).  
+				  3️⃣ Sustituye las fuerzas y distancias perpendiculares:  
+				  $$ F_1 d_1 = F_2 d_2. $$  
+				  4️⃣ Resuelve para la fuerza o distancia buscada.
+
+				  Este procedimiento permite comprender cómo las fuerzas pueden compensarse para mantener el equilibrio.
+				  `
+				},
+				{
+				  title: 'Equilibrio total de cuerpos rígidos',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/MJTITOMHgBk?si=844SAJOym4aONCzW" title="Equilibrio total" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  Un cuerpo está en <b>equilibrio total</b> si se cumplen simultáneamente las dos condiciones:
+				  $$ \\sum \\vec{F} = \\vec{0}, \\qquad \\sum \\tau = 0. $$
+				  La primera evita movimientos lineales; la segunda evita rotaciones.
+
+				  Ejemplo típico: una viga sostenida por dos apoyos que equilibra su propio peso y el de cargas adicionales.
+				  Estos principios son la base del diseño estructural y el análisis de sistemas estáticos.
+				  `
+				},
+				{
+				  title: 'Ejercicio de equilibrio total',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/bND2VGji9Is?si=UIoYCILfbFchU4MA" title="Ejercicio equilibrio total" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  <b>Ejemplo:</b>  
+				  Una viga horizontal de longitud $L$ y peso propio $W$ está apoyada en los extremos A y B.  
+				  Condiciones de equilibrio:
+				  $$ R_A + R_B = W, $$
+				  y tomando momentos respecto de A:
+				  $$ R_B L = W \\frac{L}{2} \\Rightarrow R_B = \\frac{W}{2}, \\quad R_A = \\frac{W}{2}. $$
+
+				  De esta manera, ambas reacciones se reparten el peso de forma equilibrada.  
+				  El razonamiento es idéntico para puentes, grúas o estructuras estáticas reales.
+				  `
+				}
+			  ]
+			},
+			quimica: {
+			  name: 'Química',
+			  topics: [
+				{
+				  title: 'Leyes Ponderales – Ley de Lavoisier',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/stUIYf17FwM?si=_QCX0VMIw-4u1_iA" title="Ley de Lavoisier" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  La <b>Ley de Lavoisier</b> establece que en toda reacción química, la masa total de los reactivos es igual a la masa total de los productos:
+				  $$ m_{\\text{reactivos}} = m_{\\text{productos}}. $$
+				  Esto significa que la materia no se crea ni se destruye, solo se transforma.  
+
+				  <b>Ejemplo:</b>  
+				  Cuando el hidrógeno y el oxígeno reaccionan para formar agua:
+				  $$ 2\\,\\mathrm{H_2} + \\mathrm{O_2} \\rightarrow 2\\,\\mathrm{H_2O}, $$
+				  las masas cumplen:
+				  $$ 2(2) + 32 = 36\\,\\text{g de reactivos} = 36\\,\\text{g de productos}. $$
+				  `
+				},
+				{
+				  title: 'Leyes Ponderales – Ley de Dalton (proporciones múltiples)',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/TVtt9zwVOgA?si=oWuCaIWEV9PXGWX-" title="Ley de Dalton" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  La <b>Ley de Dalton</b> afirma que si dos elementos se combinan de distintas maneras para formar varios compuestos,
+				  las masas de uno que se combinan con una cantidad fija del otro están en proporciones de números enteros pequeños.
+
+				  <b>Ejemplo:</b>  
+				  El carbono y el oxígeno forman:
+				  - Monóxido de carbono (CO): 12 g de C con 16 g de O.  
+				  - Dióxido de carbono (CO₂): 12 g de C con 32 g de O.  
+				  La proporción de masas de O en ambos compuestos es $16:32 = 1:2$, un número entero simple.
+				  `
+				},
+				{
+				  title: 'Leyes Ponderales – Ley de Proust (proporciones definidas)',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/WnzCl-EJkiU?si=y90-xJe3v686UHHD" title="Ley de Proust" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  La <b>Ley de Proust</b> indica que un compuesto puro siempre tiene la misma proporción en masa de sus elementos,
+				  sin importar su origen o método de obtención.  
+
+				  <b>Ejemplo:</b>  
+				  En el agua ($\\mathrm{H_2O}$), la relación de masas entre hidrógeno y oxígeno siempre es:
+				  $$ \\frac{m_{\\text H}}{m_{\\text O}} = \\frac{2\\times1}{16} = \\frac{1}{8}. $$
+				  Por tanto, 1 g de hidrógeno se combina siempre con 8 g de oxígeno para formar agua.
+				  `
+				},
+				{
+				  title: 'Reactivo limitante y en exceso',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/Th_epvvGUx8?si=Z1QJfcmn9_sIsR88" title="Reactivo limitante y en exceso" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  En una reacción química, el <b>reactivo limitante</b> es el que se consume primero y determina la cantidad máxima de producto que puede formarse.  
+				  El <b>reactivo en exceso</b> queda parcialmente sin reaccionar.  
+
+				  <b>Paso a paso:</b>  
+				  1️⃣ Calcula los moles de cada reactivo: $n = m/M$.  
+				  2️⃣ Divide los moles entre sus coeficientes estequiométricos.  
+				  3️⃣ El menor resultado indica el reactivo limitante.  
+
+				  <b>Ejemplo:</b>  
+				  $$ \\mathrm{2H_2 + O_2 \\to 2H_2O} $$  
+				  Si tienes 4 mol de $\\mathrm{H_2}$ y 3 mol de $\\mathrm{O_2}$:  
+				  $\\frac{4}{2}=2$, $\\frac{3}{1}=3$ → el menor valor es 2 → $\\mathrm{H_2}$ es el limitante.
+				  `
+				},
+				{
+				  title: 'Ejercicio – Leyes Ponderales',
+				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/5_GeOnBtlOQ?si=hjv9mGEySdHcouo3" title="Ejercicio Leyes Ponderales" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
+				  description: `
+				  En este ejercicio se aplican las tres leyes ponderales para analizar masas de reactivos y productos.  
+				  Se espera que el estudiante identifique la ley correspondiente, compruebe las proporciones y determine la coherencia de los datos experimentales.
+
+				  <b>Recomendación:</b> redondear las masas con dos decimales y justificar si los resultados confirman o no la ley evaluada.
+				  `
+				}
+			  ]
+			},
         };
 
-        let currentRole = 'admin';
+		const tutorLinks = {
+		  matematicas: 'https://chatgpt.com/g/g-686599df8fc48191a33742ebf9942be8-fisigen',
+		  fisica: 'https://chatgpt.com/g/g-682b57c92b208191b5add667cb74e058-neutrino',
+		  quimica: 'https://chatgpt.com/g/g-I55tWh9Vc-taxonomia-de-bloom'
+		};
+
+		
+		
+        let currentRole = 'student';
 
         // Login handlers
         document.getElementById('admin-tab').addEventListener('click', () => {
@@ -986,16 +1182,16 @@
                 <div class="topic-section">
                     <h2 class="topic-title">${topic.title}</h2>
                     <div class="video-container">
-                        <img src="${topic.video}" alt="${topic.title}">
-                        <div class="play-button">▶</div>
+                        ${topic.iframe ? topic.iframe : `<img src="${topic.video}" alt="${topic.title}"><div class="play-button">▶</div>`}
                     </div>
-                    <p class="topic-description">${topic.description}</p>
+                    ${topic.description ? `<p class="topic-description">${topic.description}</p>` : ''}
                     <div class="action-buttons">
-                        <button class="btn-primary" onclick="openQuiz('${courseId}', '${topic.title}')">Cuestionario Interactivo</button>
-                        <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor Inteligente</button>
+                        <button class="btn-primary" onclick="openQuiz('${courseId}', '${topic.title}')">Autoevaluación</button>
+                        <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor GPT</button>
                     </div>
                 </div>
             `).join('');
+            if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
         }
 
         // Volver al dashboard
@@ -1011,8 +1207,13 @@
 
         // Abrir tutor inteligente
         function openTutor(courseId, topicTitle) {
-            alert(`Tutor Inteligente: ${topicTitle}\n\nPróximamente: Chat con IA para resolver dudas sobre el tema.`);
-        }
+		  const url = tutorLinks[courseId];
+		  if (!url) {
+			alert('No hay tutor configurado para este curso.');
+			return;
+		  }
+		  window.open(url, '_blank', 'noopener,noreferrer');
+		}
 
         // Cerrar sesión
         function logout() {
@@ -1029,5 +1230,32 @@
             }
         }
     </script>
+
+	<script>
+	  // Toggle de modo oscuro con persistencia + cambio de icono
+	  const themeButtons = document.querySelectorAll('.theme-toggle');
+	  const themeIcons = document.querySelectorAll('.theme-toggle img');
+
+	  // Aplica tema + iconos + persistencia
+	  function applyTheme(isDark) {
+		document.body.classList.toggle('dark-mode', isDark);
+		themeIcons.forEach(img => { img.src = isDark ? 'oscuro.png' : 'claro.png'; });
+		localStorage.setItem('smartstudy-theme', isDark ? 'dark' : 'light');
+	  }
+
+	  // Estado guardado
+	  const saved = localStorage.getItem('smartstudy-theme');
+	  applyTheme(saved === 'dark');
+
+	  // Click en cualquiera de los botones
+	  themeButtons.forEach(btn => {
+		btn.addEventListener('click', () => {
+		  const isDark = !document.body.classList.contains('dark-mode');
+		  applyTheme(isDark);
+		});
+	  });
+	</script>
+
+	
 </body>
 </html>
