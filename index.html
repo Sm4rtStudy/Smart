@@ -319,6 +319,7 @@
 
         .logo-text {
             font-size: 22px;
+
             font-weight: 700;
             color: #1a1a1a;
         }
@@ -828,7 +829,7 @@ body.dark-mode .quiz-badge{ border-color: rgba(255,255,255,.1); }
 .quiz-summary { border:1px dashed rgba(0,0,0,.15); border-radius: 12px; padding: 14px; }
 .quiz-summary h4 { margin-bottom: 8px; }
 .btn-quiz { padding:10px 14px; border-radius: 10px; border: 1px solid transparent; cursor:pointer; font-weight:600; }
-.btn-quiz.primary { background:#2563eb; color:#fff; }
+.btn-quiz.primary { background:#056e6e; color:#fff; }
 .btn-quiz.secondary { background:#e5e7eb; }
 body.dark-mode .btn-quiz.secondary { background:#333; color:#ddd; }
 .btn-quiz.ghost { background: transparent; border-color: rgba(0,0,0,.15); }
@@ -839,6 +840,50 @@ body.dark-mode .btn-quiz.ghost { border-color: rgba(255,255,255,.15); color:#ddd
 .muted { opacity: .8; }
 .katex, .MathJax { font-size: 1.05em; }
 </style>
+
+
+<!-- === SmartStudy Google Apps Script API Config (auto-insert) === -->
+<script>
+window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+const GAS_ENDPOINT_SMART = "https://script.google.com/macros/s/AKfycbzbBt7dCl7udShr9KUNcMD8VFeYOY0xIyxJO-0PU80PRMtzAj-xjysswnYCtZvDiCHe/exec";
+const GAS_TOKEN_SMART = "SmartStudy_2025_SECURE_1978";
+
+async function SS_logToGAS({ code, name = "", course = "", event = "" }) {
+  try {
+    const payload = new URLSearchParams({
+      token: GAS_TOKEN_SMART,
+      code,
+      name,
+      course,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      event
+    });
+    await fetch(GAS_ENDPOINT_SMART, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: payload.toString()
+    });
+  } catch (err) {
+    console.error("Error enviando datos a Google Apps Script (SmartStudy):", err);
+  }
+}
+
+function SS_track(event, extra = {
+}) {
+  try {
+    window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+    SS_logToGAS({
+      code: SS_currentUser.code || "",
+      name: SS_currentUser.name || "",
+      course: extra.course || SS_currentUser.course || "",
+      event
+    });
+  } catch(e) {
+    console.warn("No se pudo registrar el evento:", event, e);
+  }
+}
+</script>
 
 </head>
 <body>
@@ -917,12 +962,7 @@ body.dark-mode .btn-quiz.ghost { border-color: rgba(255,255,255,.15); color:#ddd
                 <p class="hero-subtitle">En esta sección puedes acceder a los recursos de Matemática, Física y Química, con videos explicativos, autoevaluaciones interactivas y el apoyo de tu tutor IA, que te acompaña paso a paso para comprender y aplicar cada concepto en la ingeniería y la vida real.</p>
             </div>
 			
-				<div id="admin-download" style="display:none; text-align:center; margin-top:40px;">
-				<button class="explore-btn" onclick="descargarRegistro()">
-					<span>📄 Descargar registro de actividad</span>
-				</button>
-				</div>
-			
+		
             <div class="courses-grid">
                 <div class="course-card">
                     <div class="course-content">
@@ -1595,7 +1635,7 @@ function closeQuiz() {
     
 /* ====== ENDPOINTS: reemplaza por tus Web Apps de Apps Script ====== */
 const ADMIN_ENDPOINTS = {
-  actividad: 'https://script.google.com/macros/s/AKfycbx_ACTIVIDAD/exec?tipo=actividad',
+  actividad: 'https://docs.google.com/spreadsheets/d/1UX8IgNRXWDuRZtDg2SR-AHV6SUYjeyNiQECrguiZcRc/edit?usp=sharing',
   resultados: {
     mate: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=matematica',
     fisi: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=fisica',
@@ -1699,12 +1739,165 @@ showCourse = function(courseId){
       <!-- contenido dinámico -->
     </div>
     <div class="quiz-footer">
-      <button class="btn-quiz ghost" onclick="showSummary()">Mostrar resultados</button>
       <button class="btn-quiz secondary" onclick="resetQuiz()">Reiniciar</button>
       <button class="btn-quiz primary" onclick="gradeQuiz()">Enviar respuestas</button>
     </div>
   </div>
 </div>
+
+
+<!-- === SmartStudy activity tracking hooks (auto-insert) === -->
+<script>
+(function(){
+  const form = document.getElementById('login-form');
+  if (form) {
+    form.addEventListener('submit', function(){
+      try {
+        const role = window.currentRole || (document.getElementById('admin-fields')?.style.display === 'block' ? 'admin' : 'student');
+        if (role === 'student') {
+          const name = (document.getElementById('student-name')?.value || '').trim();
+          const code = (document.getElementById('student-code')?.value || '').trim();
+          if (name && code) {
+            window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+            SS_currentUser.name = name;
+            SS_currentUser.code = code;
+            SS_currentUser.course = '';
+            SS_track('login');
+          }
+        }
+      } catch(e) { console.warn(e); }
+    }, { capture: true });
+  }
+
+  if (typeof window.showCourse === 'function') {
+    const _showCourse = window.showCourse;
+    window.showCourse = function(courseId){
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+        SS_currentUser.course = cname;
+        SS_track(`open_course:${courseId}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _showCourse.apply(this, arguments);
+    };
+  }
+
+  if (typeof window.openQuiz === 'function') {
+    const _openQuiz = window.openQuiz;
+    window.openQuiz = function(courseId, topicTitle){
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_quiz:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _openQuiz.apply(this, arguments);
+    };
+  } else {
+    window.openQuiz = function(courseId, topicTitle){
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_quiz:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+    };
+  }
+
+  if (typeof window.openTutor === 'function') {
+    const _openTutor = window.openTutor;
+    window.openTutor = function(courseId, topicTitle){
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_tutor:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _openTutor.apply(this, arguments);
+    };
+  } else {
+    window.openTutor = function(courseId, topicTitle){
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_tutor:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+    };
+  }
+})();
+</script>
+
+
+<!-- === SmartStudy activity tracking hooks === -->
+<script>
+(function(){
+  // Hook login submit for student role
+  const form = document.getElementById('login-form');
+  if (form) {
+    form.addEventListener('submit', function() {
+      try {
+        const role = window.currentRole || (document.getElementById('admin-fields')?.style.display === 'block' ? 'admin' : 'student');
+        if (role === 'student') {
+          const name = (document.getElementById('student-name')?.value || '').trim();
+          const code = (document.getElementById('student-code')?.value || '').trim();
+          if (name && code) {
+            window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+            SS_currentUser.name = name;
+            SS_currentUser.code = code;
+            SS_currentUser.course = '';
+            SS_track('login');
+          }
+        }
+      } catch(e) { console.warn(e); }
+    }, { capture: true });
+  }
+
+  // Wrap showCourse to capture course open + set current course
+  if (typeof window.showCourse === 'function') {
+    const _showCourse = window.showCourse;
+    window.showCourse = function(courseId) {
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        window.SS_currentUser = window.SS_currentUser || { code: "", name: "", course: "" };
+        SS_currentUser.course = cname;
+        SS_track(`open_course:${courseId}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _showCourse.apply(this, arguments);
+    };
+  }
+
+  // Wrap openQuiz
+  if (typeof window.openQuiz === 'function') {
+    const _openQuiz = window.openQuiz;
+    window.openQuiz = function(courseId, topicTitle) {
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_quiz:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _openQuiz.apply(this, arguments);
+    };
+  } else {
+    window.openQuiz = function(courseId, topicTitle) {
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_quiz:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+    };
+  }
+
+  // Wrap openTutor
+  if (typeof window.openTutor === 'function') {
+    const _openTutor = window.openTutor;
+    window.openTutor = function(courseId, topicTitle) {
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_tutor:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+      return _openTutor.apply(this, arguments);
+    };
+  } else {
+    window.openTutor = function(courseId, topicTitle) {
+      try {
+        const cname = (window.coursesContent && window.coursesContent[courseId] && window.coursesContent[courseId].name) ? window.coursesContent[courseId].name : courseId;
+        SS_track(`open_tutor:${topicTitle}`, { course: cname });
+      } catch(e) { console.warn(e); }
+    };
+  }
+})();
+</script>
 
 </body>
 </html>
