@@ -1637,9 +1637,9 @@ function closeQuiz() {
 const ADMIN_ENDPOINTS = {
   actividad: 'https://docs.google.com/spreadsheets/d/1UX8IgNRXWDuRZtDg2SR-AHV6SUYjeyNiQECrguiZcRc/edit?usp=sharing',
   resultados: {
-    mate: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=matematica',
-    fisi: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=fisica',
-    quim: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=quimica'
+    mate: 'https://docs.google.com/spreadsheets/d/10EFqxfZG2nCvijNtRslG4UzkxDKKWsrgRYMo2O6GFhE/edit?usp=sharing',
+    fisi: 'https://docs.google.com/spreadsheets/d/10EFqxfZG2nCvijNtRslG4UzkxDKKWsrgRYMo2O6GFhE/edit?usp=sharing',
+    quim: 'https://docs.google.com/spreadsheets/d/10EFqxfZG2nCvijNtRslG4UzkxDKKWsrgRYMo2O6GFhE/edit?usp=sharing'
   }
 };
 
@@ -1896,6 +1896,124 @@ showCourse = function(courseId){
       } catch(e) { console.warn(e); }
     };
   }
+})();
+</script>
+
+
+<!-- === SmartStudy Quiz Results API (final) === -->
+<img src="https://script.google.com/macros/s/AKfycbwrWnsaiRVjeQqY7fRsoyaQ-M3zS3A-YQl1EeUjEUtWxgmv-2nvIKIjkSDvjxi6n0ywqg/exec?action=health&cb=1" alt="" style="width:1px;height:1px;opacity:0;position:absolute;pointer-events:none" aria-hidden="true" referrerpolicy="no-referrer">
+<script>
+(function(){
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwrWnsaiRVjeQqY7fRsoyaQ-M3zS3A-YQl1EeUjEUtWxgmv-2nvIKIjkSDvjxi6n0ywqg/exec";
+  const TOKEN = "SmartStudy_QUIZ_TOKEN_2025";
+
+  // Mark start time when opening quiz
+  if (typeof window.openQuiz === 'function') {
+    const _openQuiz = window.openQuiz;
+    window.openQuiz = function(courseId, topicTitle){
+      const r = _openQuiz.apply(this, arguments);
+      try {
+        window.__currentQuiz = window.__currentQuiz || {};
+        __currentQuiz._tStart = Date.now();
+        __currentQuiz.courseId = courseId;
+        __currentQuiz.topicTitle = topicTitle;
+      } catch(e){}
+      return r;
+    }
+  }
+
+  function getBank(){
+    try {
+      const cid = __currentQuiz && __currentQuiz.courseId;
+      const t = __currentQuiz && __currentQuiz.topicTitle;
+      return (quizBank && quizBank[cid] && quizBank[cid][t]) ? quizBank[cid][t] : null;
+    } catch(e){ return null; }
+  }
+
+  function toStr(v){ return (v===undefined || v===null) ? '' : String(v); }
+
+  function sendResults(){
+    const bank = getBank();
+    if (!bank) return;
+    const answers = (__currentQuiz && Array.isArray(__currentQuiz.answers)) ? __currentQuiz.answers : [];
+    const result = (__currentQuiz && __currentQuiz.result) ? __currentQuiz.result : { total: bank.length, correct: 0, wrong: bank.length, answers };
+    const fechaISO = new Date().toISOString();
+    const attemptId = [toStr(__currentQuiz.courseId), toStr(__currentQuiz.topicTitle), toStr((window.SS_currentUser&&SS_currentUser.code)||'anon'), fechaISO].join("::");
+    const codigo = (window.SS_currentUser && SS_currentUser.code) || '';
+    const nombre = (window.SS_currentUser && SS_currentUser.name) || '';
+    const cursoLabel = (window.SS_currentUser && SS_currentUser.course) || toStr(__currentQuiz.courseId);
+    const tema = toStr(__currentQuiz.topicTitle);
+    const ua = navigator.userAgent || '';
+    // per item
+    bank.forEach((item, i)=>{
+      const chosenIdx = answers[i];
+      const payload = new URLSearchParams();
+      payload.set('action','submitItem');
+      payload.set('token', TOKEN);
+      payload.set('attemptId', attemptId);
+      payload.set('fechaISO', fechaISO);
+      payload.set('codigo', codigo);
+      payload.set('nombre', nombre);
+      payload.set('curso', cursoLabel);
+      payload.set('tema', tema);
+      payload.set('numeroPregunta', String(i+1));
+      payload.set('enunciado', toStr(item.q));
+      payload.set('opcionMarcada', toStr(chosenIdx==null?'':(item.options[chosenIdx]||'')));
+      payload.set('opcionCorrecta', toStr((item.options[item.answer]||'')));
+      payload.set('esCorrecta', String(chosenIdx===item.answer));
+      payload.set('tiempoMs','0');
+      payload.set('userAgent', ua);
+      fetch(ENDPOINT, {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body:payload.toString()
+      }).catch(()=>{});
+    });
+    // summary
+    const total = result.total || bank.length;
+    const aciertos = result.correct || 0;
+    const errores = result.wrong || Math.max(0,total-aciertos);
+    const porcentaje = total ? Math.round((aciertos/total)*100) : 0;
+    const duracionMs = Math.max(0, Date.now() - ((__currentQuiz&&__currentQuiz._tStart)||Date.now()));
+    const payload2 = new URLSearchParams();
+    payload2.set('action','finalizeAttempt');
+    payload2.set('token', TOKEN);
+    payload2.set('attemptId', attemptId);
+    payload2.set('fechaISO', fechaISO);
+    payload2.set('codigo', codigo);
+    payload2.set('nombre', nombre);
+    payload2.set('curso', cursoLabel);
+    payload2.set('tema', tema);
+    payload2.set('total', String(total));
+    payload2.set('aciertos', String(aciertos));
+    payload2.set('errores', String(errores));
+    payload2.set('porcentaje', String(porcentaje));
+    payload2.set('duracionMs', String(duracionMs));
+    payload2.set('detalleJSON', JSON.stringify(answers));
+    payload2.set('userAgent', ua);
+    fetch(ENDPOINT, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:payload2.toString()
+    }).catch(()=>{});
+  }
+
+  // primary: after gradeQuiz finishes
+  if (typeof window.gradeQuiz === 'function') {
+    const _gradeQuiz = window.gradeQuiz;
+    window.gradeQuiz = function(){
+      const r = _gradeQuiz.apply(this, arguments);
+      try { sendResults(); } catch(e){}
+      return r;
+    }
+  }
+
+  // fallback: click listener on "Enviar respuestas"
+  document.addEventListener('click', function(ev){
+    const btn = ev.target.closest('button.btn-quiz.primary');
+    if (!btn) return;
+    setTimeout(()=>{ try { sendResults(); } catch(e){} }, 0);
+  }, true);
 })();
 </script>
 
