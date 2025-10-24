@@ -449,7 +449,7 @@
         }
 
         .explore-btn:hover {
-            background: #f79502;
+            background: #e5a600;
         }
 
         /* ========== COURSE DETAIL PAGE ========== */
@@ -711,6 +711,55 @@
             border: 0;
             border-radius: 12px;
         }
+
+/* === Admin Actions Menu === */
+.admin-actions-menu{ position:relative; display:none; }
+.admin-actions-menu .actions-btn{
+  display:flex; align-items:center; gap:6px;
+  padding:10px 12px; border-radius:999px; border:0; cursor:pointer;
+  font-weight:700; background:#f5f5f5; color:#1a1a1a; transition:.25s;
+}
+.admin-actions-menu .actions-btn:hover{ background:#f7b602; color:#1a1a1a; transform:translateY(-1px); }
+
+.admin-actions-menu .actions-dropdown{
+  position:absolute; top:110%; right:0; min-width:220px;
+  background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15);
+  padding:6px 0; display:none; z-index:1200;
+}
+.admin-actions-menu:hover .actions-dropdown{ display:block; }
+
+.admin-actions-menu .actions-dropdown a,
+.admin-actions-menu .actions-dropdown .submenu > span{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:10px; padding:10px 14px; color:#444; text-decoration:none; cursor:pointer;
+}
+.admin-actions-menu .actions-dropdown a:hover,
+.admin-actions-menu .actions-dropdown .submenu > span:hover{
+  background:#f7b602; color:#1a1a1a;
+}
+
+/* Submenú lateral */
+.admin-actions-menu .submenu{ position:relative; }
+.admin-actions-menu .submenu-content{
+  position:absolute; top:0; left:100%; min-width:220px; display:none;
+  background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15);
+  padding:6px 0;
+}
+.admin-actions-menu .submenu:hover .submenu-content{ display:block; }
+
+/* Dark mode */
+body.dark-mode .admin-actions-menu .actions-btn{ background:#333; color:#eee; }
+body.dark-mode .admin-actions-menu .actions-btn:hover{ background:#f7b602; color:#1a1a1a; }
+body.dark-mode .admin-actions-menu .actions-dropdown,
+body.dark-mode .admin-actions-menu .submenu-content{
+  background:#242424; box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+body.dark-mode .admin-actions-menu .actions-dropdown a,
+body.dark-mode .admin-actions-menu .actions-dropdown .submenu > span{ color:#ddd; }
+body.dark-mode .admin-actions-menu .actions-dropdown a:hover,
+body.dark-mode .admin-actions-menu .actions-dropdown .submenu > span:hover{
+  background:#f7b602; color:#1a1a1a;
+}
 </style>
 
     <!-- MathJax for rendering LaTeX equations -->
@@ -749,6 +798,48 @@
 	</script>
 
 		
+
+<style id="quiz-styles">
+/* === Autoevaluación (modal tipo chat) === */
+#quiz-modal {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.35); z-index: 9999; padding: 1rem;
+}
+#quiz-modal .quiz-card {
+  width: min(860px, 100%); max-height: 90vh; overflow: hidden; border-radius: 16px;
+  background: #fff; color: #111; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  display: grid; grid-template-rows: auto 1fr auto;
+}
+body.dark-mode #quiz-modal .quiz-card { background: #1f1f1f; color: #eee; }
+.quiz-header { display:flex; align-items:center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,.08); }
+body.dark-mode .quiz-header { border-color: rgba(255,255,255,.08); }
+.quiz-title { font-weight: 700; font-size: 1.05rem; }
+.quiz-close { border:0; background: transparent; font-size: 1.4rem; line-height:1; cursor:pointer; color: inherit; }
+.quiz-body { overflow: auto; padding: 18px; display:flex; flex-direction: column; gap: 14px; }
+.quiz-footer { padding: 14px 18px; display:flex; gap:10px; border-top: 1px solid rgba(0,0,0,.08); justify-content: flex-end; flex-wrap: wrap; }
+body.dark-mode .quiz-footer { border-color: rgba(255,255,255,.08); }
+.quiz-question { border:1px solid rgba(0,0,0,.08); border-radius: 12px; padding:14px }
+body.dark-mode .quiz-question { border-color: rgba(255,255,255,.08); }
+.quiz-question h4 { margin-bottom: 8px; font-size: 1rem; }
+.quiz-options { display: grid; gap:8px; margin-top: 8px; }
+.quiz-option { display:flex; gap:10px; align-items:flex-start; }
+.quiz-badge { display:inline-flex; align-items:center; gap:6px; font-size:.8rem; padding:4px 8px; border-radius:999px; border:1px solid rgba(0,0,0,.1); }
+body.dark-mode .quiz-badge{ border-color: rgba(255,255,255,.1); }
+.quiz-summary { border:1px dashed rgba(0,0,0,.15); border-radius: 12px; padding: 14px; }
+.quiz-summary h4 { margin-bottom: 8px; }
+.btn-quiz { padding:10px 14px; border-radius: 10px; border: 1px solid transparent; cursor:pointer; font-weight:600; }
+.btn-quiz.primary { background:#2563eb; color:#fff; }
+.btn-quiz.secondary { background:#e5e7eb; }
+body.dark-mode .btn-quiz.secondary { background:#333; color:#ddd; }
+.btn-quiz.ghost { background: transparent; border-color: rgba(0,0,0,.15); }
+body.dark-mode .btn-quiz.ghost { border-color: rgba(255,255,255,.15); color:#ddd; }
+.quiz-feedback { font-size:.9rem; opacity:.9; margin-top:6px; }
+.correct { color: #16a34a; }
+.incorrect { color: #dc2626; }
+.muted { opacity: .8; }
+.katex, .MathJax { font-size: 1.05em; }
+</style>
+
 </head>
 <body>
     <!-- ========== LOGIN PAGE ========== -->
@@ -799,6 +890,22 @@
                     <span class="logo-text">SmartStudy</span>
                 </div>
                 <div class="header-right">
+                    <!-- Menú principal de administrador (Dashboard) -->
+                    <div class="admin-actions-menu">
+                      <button class="actions-btn">⚙️ Acciones ▾</button>
+                      <div class="actions-dropdown">
+                        <a data-link="actividad" href="#" target="_blank" rel="noopener">Actividad</a>
+                        <div class="submenu">
+                          <span>Resultados ▸</span>
+                          <div class="submenu-content">
+                            <a data-link="mate" href="#" target="_blank" rel="noopener">Matemática</a>
+                            <a data-link="fisi" href="#" target="_blank" rel="noopener">Física</a>
+                            <a data-link="quim" href="#" target="_blank" rel="noopener">Química</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <button class="theme-toggle"><img src="claro.png" width="32" height="32" alt=""/></button>
                     <button class="logout-btn" onclick="logout()" title="Cerrar Sesión"><img src="salir.png" width="32" height="32" alt=""/></button>
                 </div>
@@ -810,7 +917,12 @@
                 <p class="hero-subtitle">En esta sección puedes acceder a los recursos de Matemática, Física y Química, con videos explicativos, autoevaluaciones interactivas y el apoyo de tu tutor IA, que te acompaña paso a paso para comprender y aplicar cada concepto en la ingeniería y la vida real.</p>
             </div>
 			
-	
+				<div id="admin-download" style="display:none; text-align:center; margin-top:40px;">
+				<button class="explore-btn" onclick="descargarRegistro()">
+					<span>📄 Descargar registro de actividad</span>
+				</button>
+				</div>
+			
             <div class="courses-grid">
                 <div class="course-card">
                     <div class="course-content">
@@ -859,11 +971,6 @@
                 </div>
             </div>
         </main>
-				<div id="admin-download" style="display:none; text-align:center; margin-top:40px;">
-				<button class="explore-btn" onclick="descargarRegistro()">
-					<span>💾 Descargar registro de actividad</span>
-				</button>
-				</div>
     </div>
 	
 
@@ -888,6 +995,22 @@
                         </div>
                     </div>
                     <div class="user-section">
+                        <!-- Menú Acciones (solo admin) en página de curso -->
+                        <div class="admin-actions-menu">
+                          <button class="actions-btn">⚙️ Acciones ▾</button>
+                          <div class="actions-dropdown">
+                            <a data-link="actividad" href="#" target="_blank" rel="noopener">Actividad</a>
+                            <div class="submenu">
+                              <span>Resultados ▸</span>
+                              <div class="submenu-content">
+                                <a data-link="mate" href="#" target="_blank" rel="noopener">Matemática</a>
+                                <a data-link="fisi" href="#" target="_blank" rel="noopener">Física</a>
+                                <a data-link="quim" href="#" target="_blank" rel="noopener">Química</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <button class="theme-toggle"><img src="claro.png" width="32" height="32" alt=""/></button>
                         <button class="logout-btn" onclick="logout()" title="Cerrar Sesión"><img src="salir.png" width="32" height="32" alt=""/></button>
                     </div>
@@ -927,7 +1050,10 @@
                         $$ (f + g)(x) = f(x) + g(x) $$
                         <br><b>Ejemplo:</b> si $f(x) = 2x + 1$ y $g(x) = x^2$, entonces
                         $$ (f + g)(x) = x^2 + 2x + 1. $$
-                        El dominio de $(f+g)$ es la intersección de los dominios de $f$ y $g$.`
+                        El dominio de $(f+g)$ es la intersección de los dominios de $f$ y $g$.
+						<br>1️⃣ Solo está definida donde ambas funciones existen.
+						<br>2️⃣ Si $𝑓$ y $𝑔$ son continuas, su suma también lo será.
+						<br>3️⃣ Útil para modelar procesos que se combinan (por ejemplo, fuerzas o costos).`
                     },
                     {
                         title: 'Resta de Funciones',
@@ -935,7 +1061,11 @@
                         description: `La resta de funciones se define como
                         $$ (f - g)(x) = f(x) - g(x). $$
                         <br><b>Ejemplo:</b> si $f(x) = x^2 + 2x$ y $g(x) = x + 1$, entonces
-                        $$ (f - g)(x) = x^2 + x - 1. $$`
+                        $$ (f - g)(x) = x^2 + x - 1. $$
+						En el dominio de la resta $(f − g)$, los conjuntos se intersectan, no se unen.
+						<br>1️⃣ Igual que en la suma, ambas deben estar definidas en $𝑥$.
+						<br>2️⃣ Afecta la forma gráfica desplazando o invirtiendo zonas según los signos.
+						<br>3️⃣ Puede representar diferencias de magnitudes o tasas.`
                     },
                     {
                         title: 'Multiplicación de Funciones',
@@ -943,7 +1073,12 @@
                         description: `La multiplicación de funciones:
                         $$ (f \\cdot g)(x) = f(x) \\cdot g(x). $$
                         <br><b>Ejemplo:</b> si $f(x) = x - 2$ y $g(x) = \\sqrt{x}$, entonces
-                        $$ (f\\cdot g)(x) = (x - 2)\\sqrt{x}, \\quad x \\ge 0. $$`
+                        $$ (f\\cdot g)(x) = (x - 2)\\sqrt{x}, \\quad x \\ge 0. $$
+						Intersección de los dominios de $𝑓$ y $𝑔$.
+						<br>1️⃣ Si una función vale 0 en un punto, el producto también será 0.
+						<br>2️⃣ Si ambas son continuas, su producto también lo será.
+						<br>3️⃣ Puede alterar la amplitud y el signo del resultado.`
+						
                     },
                     {
                         title: 'División de Funciones',
@@ -951,14 +1086,19 @@
                         description: `La división de funciones:
                         $$ \\left( \\frac{f}{g} \\right)(x) = \\frac{f(x)}{g(x)}, \\quad g(x) \\ne 0. $$
                         <br><b>Ejemplo:</b> si $f(x) = x^2 - 1$ y $g(x) = x - 1$, entonces
-                        $$ \\frac{f(x)}{g(x)} = \\frac{x^2 - 1}{x - 1} = x + 1, \\quad x \\ne 1. $$`
+                        $$ \\frac{f(x)}{g(x)} = \\frac{x^2 - 1}{x - 1} = x + 1, \\quad x \\ne 1. $$
+						⚠️ No está definida cuando $𝑔(𝑥)=0$. Si $𝑔(𝑥)$ se acerca a 0, puede haber <b>asíntotas verticales</b>.
+						La continuidad depende de que $𝑔(𝑥)≠0$ en el intervalo.`
                     },
                     {
                         title: 'Dominio y Rango de Funciones',
                         iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/u9FR4le6xBY?si=8rPb3cb58pQLOkS0" title="Dominio y Rango de Funciones" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
                         description: `El <b>dominio</b> es el conjunto de valores de $x$ para los que $f(x)$ está definida; el <b>rango</b> es el conjunto de valores de $f(x)$. 
                         <br><b>Ejemplo:</b> si $f(x) = \\sqrt{x - 1}$, entonces
-                        $$ \\text{Dom}(f) = [1, \\infty), \\qquad \\text{Ran}(f) = [0, \\infty). $$`
+                        $$ \\text{Dom}(f) = [1, \\infty), \\qquad \\text{Ran}(f) = [0, \\infty). $$
+						<br><b>El rango</b> (también llamado imagen de la función) es el conjunto de valores que realmente toma la función al evaluar todas las $𝑥$ posibles de su dominio.
+						<br>En otras palabras:
+						<br>$Rango(f)={f(x)∣x∈Dom(f)}$`
                     }
                 ]
             },
@@ -974,14 +1114,14 @@
 				  Se define como el producto vectorial entre el vector posición y la fuerza aplicada:
 				  $$ \\vec{\\tau} = \\vec{r} \\times \\vec{F}, \\quad \\tau = r F \\sin\\theta. $$
 				  Donde:
-				  - $r$ es la distancia desde el eje de rotación hasta el punto de aplicación de la fuerza,
-				  - $F$ es la magnitud de la fuerza,
-				  - $\\theta$ el ángulo entre ambos vectores.
+				  <br>- $r$ es la distancia desde el eje de rotación hasta el punto de aplicación de la fuerza,
+				  <br>- $F$ es la magnitud de la fuerza,
+				  <br>- $\\theta$ el ángulo entre ambos vectores.
 
-				  Cuanto mayor sea la distancia o la fuerza, mayor será el torque.  
-				  <b>Ejemplo:</b> una llave de $r=0.25\\,\\text{m}$ con una fuerza de $80\\,\\text{N}$ perpendicular genera:
+				  <br>Cuanto mayor sea la distancia o la fuerza, mayor será el torque.  
+				  <br><b>Ejemplo:</b> una llave de $r=0.25\\,\\text{m}$ con una fuerza de $80\\,\\text{N}$ perpendicular genera:
 				  $$ \\tau = 0.25 \\times 80 = 20\\,\\text{N·m}. $$
-				  El sentido del giro se determina con la regla de la mano derecha.
+				  <br>El sentido del giro se determina con la regla de la mano derecha.
 				  `
 				},
 				{
@@ -1003,13 +1143,13 @@
 				  iframe: `<iframe width="560" height="315" src="https://www.youtube.com/embed/xdEnJSl7shs?si=OqKK9S8ylfkaYSyi" title="Ejercicio segunda condición de equilibrio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`,
 				  description: `
 				  <b>Paso a paso:</b>
-				  1️⃣ Dibuja el <b>diagrama de cuerpo libre</b> con todas las fuerzas.  
-				  2️⃣ Elige un punto de giro donde aplicar $\\sum \\tau = 0$ (preferiblemente uno donde actúe una fuerza desconocida para eliminarla).  
-				  3️⃣ Sustituye las fuerzas y distancias perpendiculares:  
+				  <br>1️⃣ Dibuja el <b>diagrama de cuerpo libre</b> con todas las fuerzas.  
+				  <br>2️⃣ Elige un punto de giro donde aplicar $\\sum \\tau = 0$ (preferiblemente uno donde actúe una fuerza desconocida para eliminarla).  
+				  <br>3️⃣ Sustituye las fuerzas y distancias perpendiculares:  
 				  $$ F_1 d_1 = F_2 d_2. $$  
-				  4️⃣ Resuelve para la fuerza o distancia buscada.
+				  <br>4️⃣ Resuelve para la fuerza o distancia buscada.
 
-				  Este procedimiento permite comprender cómo las fuerzas pueden compensarse para mantener el equilibrio.
+				  <br>Este procedimiento permite comprender cómo las fuerzas pueden compensarse para mantener el equilibrio.
 				  `
 				},
 				{
@@ -1126,10 +1266,7 @@
 
 		
 		
-        
-        let IS_ADMIN = false; // bandera global para rol admin
-
-let currentRole = 'student';
+        let currentRole = 'student';
 
         // Login handlers
         document.getElementById('admin-tab').addEventListener('click', () => {
@@ -1160,11 +1297,7 @@ let currentRole = 'student';
                 if (admin) {
                     document.getElementById('login-page').style.display = 'none';
                     document.getElementById('dashboard-page').style.display = 'block';
-                
-                    IS_ADMIN = true;
-                    const adminBox = document.getElementById('admin-download');
-                    if (adminBox) adminBox.style.display = 'block';
-} else {
+                } else {
                     errorMessage.textContent = 'Correo o contraseña incorrectos';
                     errorMessage.style.display = 'block';
                     setTimeout(() => errorMessage.style.display = 'none', 3000);
@@ -1176,11 +1309,7 @@ let currentRole = 'student';
                 if (name && code) {
                     document.getElementById('login-page').style.display = 'none';
                     document.getElementById('dashboard-page').style.display = 'block';
-                
-                    IS_ADMIN = false;
-                    const adminBox = document.getElementById('admin-download');
-                    if (adminBox) adminBox.style.display = 'none';
-} else {
+                } else {
                     errorMessage.textContent = 'Por favor completa todos los campos';
                     errorMessage.style.display = 'block';
                     setTimeout(() => errorMessage.style.display = 'none', 3000);
@@ -1197,28 +1326,20 @@ let currentRole = 'student';
             document.getElementById('course-name-title').textContent = course.name;
 
             const topicsContainer = document.getElementById('course-topics');
-            
-            topicsContainer.innerHTML = course.topics.map(topic => {
-                const primaryLabel = IS_ADMIN ? 'Resultados' : 'Autoevaluación';
-                const primaryOnClick = IS_ADMIN
-                  ? `openResults('${courseId}', '${topic.title}')`
-                  : `openQuiz('${courseId}', '${topic.title}')`;
-                return `
-                  <div class="topic-section">
+            topicsContainer.innerHTML = course.topics.map(topic => `
+                <div class="topic-section">
                     <h2 class="topic-title">${topic.title}</h2>
                     <div class="video-container">
-                      ${topic.iframe ? topic.iframe : `<img src="${topic.video}" alt="${topic.title}"><div class="play-button">▶</div>`}
+                        ${topic.iframe ? topic.iframe : `<img src="${topic.video}" alt="${topic.title}"><div class="play-button">▶</div>`}
                     </div>
                     ${topic.description ? `<p class="topic-description">${topic.description}</p>` : ''}
                     <div class="action-buttons">
-                      <button class="btn-primary" onclick="${primaryOnClick}">${primaryLabel}</button>
-                      <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor GPT</button>
+                        <button class="btn-primary" onclick="openQuiz('${courseId}', '${topic.title}')">Autoevaluación</button>
+                        <button class="btn-secondary" onclick="openTutor('${courseId}', '${topic.title}')">Abrir Tutor GPT</button>
                     </div>
-                  </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
             if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
-    if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
         }
 
         // Volver al dashboard
@@ -1228,9 +1349,224 @@ let currentRole = 'student';
         }
 
         // Abrir cuestionario
-        function openQuiz(courseId, topicTitle) {
-            alert(`Cuestionario Interactivo: ${topicTitle}\n\nPróximamente: Sistema de cuestionarios con preguntas de opción múltiple y retroalimentación inmediata.`);
-        }
+        
+// ==== Banco de preguntas por curso/tema ====
+// Puedes editar/añadir cada tema con EXACTAMENTE 5 preguntas.
+// Formato: { q:'', options:['','','',''], answer: índiceCorrecto(0-3), feedback:'texto corto' }
+const quizBank = {
+  matematicas: {
+    "Suma de Funciones": [
+      { q: "Si $f(x)=2x$ y $g(x)=x^2$, entonces $(f+g)(2) =$ ?", options: ["6","8","10","12"], answer: 1, feedback: "Evalúa: $f(2)=4$, $g(2)=4$, suma $=8$." },
+      { q: "El dominio de $(f+g)$ es:", options: ["Unión de dominios","Intersección de dominios","Todo $\\mathbb{R}$","Ninguna"], answer: 1, feedback: "Para operaciones de funciones, el dominio es la intersección." },
+      { q: "Si $f(1)=3$ y $g(1)=-5$, entonces $(f+g)(1)=$", options: ["-2","2","8","-8"], answer: 0, feedback: "Suma directa de valores en el mismo $x$." },
+      { q: "Sea $f(x)=x$ y $g(x)=\\sqrt{x}$, ¿para qué $x$ está definida $(f+g)(x)$?", options: ["$x>0$","$x\\ge0$","$x\\ne0$","$x<0$"], answer: 1, feedback: "Intersección: $f$ dominio $\\mathbb{R}$, $g$ dominio $[0,\\infty)$ → $[0,\\infty)$." },
+      { q: "Si $f(x)=x^2$ y $g(x)=1$, entonces $(f+g)(x)$ es:", options: ["$x^2$","$x^2-1$","$x^2+1$","$2x^2$"], answer: 2, feedback: "Sumar una constante desplaza la función hacia arriba." }
+    ],
+    "Resta de Funciones": [
+      { q: "Si $f(x)=x^2$ y $g(x)=x$, $(f-g)(3)=$", options: ["6","9","12","7"], answer: 0, feedback: "$9-3=6$." },
+      { q: "El dominio de $(f-g)$ es:", options: ["Unión","Intersección","Vacío","Todo $\\mathbb{R}$"], answer: 1, feedback: "Mismo criterio que la suma." },
+      { q: "Si $f$ y $g$ están definidas en $A$ y $B$, el dominio de $(f-g)$ es:", options: ["$A\\cup B$","$A\\cap B$","$A-B$","$B-A$"], answer: 1, feedback: "Intersección." },
+      { q: "Si $f(x)=\\sqrt{x}$ y $g(x)=1$, dominio de $(f-g)$:", options: ["$x>0$","$x\\ge0$","$x\\ne0$","Todo $\\mathbb{R}$"], answer: 1, feedback: "Por $\\sqrt{x}$." },
+      { q: "Si $f(2)=5$ y $g(2)=7$, $(f-g)(2)=$", options: ["2","-2","12","-12"], answer: 1, feedback: "Resta de valores puntuales." }
+    ],
+    "Multiplicación de Funciones": [
+      { q: "Definición: $(f\\cdot g)(x)$ es:", options: ["$f(x)+g(x)$","$f(x)-g(x)$","$f(x)•g(x)$","$\\dfrac{f(x)}{g(x)}$"], answer: 2, feedback: "Producto punto a punto." },
+      { q: "Si $f(x)=x-2$ y $g(x)=\\sqrt{x}$, dominio de $(f\\cdot g)$:", options: ["$\\mathbb{R}$","$x\\ge0$","$x>2$","$x\\ne0$"], answer: 1, feedback: "Intersección: $f$ en $\mathbb{R}$ y $g$ en $[0,\infty)$ → $[0,\infty)$." },
+      { q: "Si $f(a)=0$ para algún $a$, entonces $(f\\cdot g)(a)$ es:", options: ["$g(a)$","$0$","$1$","Indefinido"], answer: 1, feedback: "Cualquier valor por cero es cero." },
+      { q: "Continuidad: si $f$ y $g$ son continuas en $x_0$, entonces $(f\\cdot g)$ es:", options: ["Siempre discontinua","Continua en $x_0$","Solo si $f(x_0)\\ne0$","Solo si $g(x_0)\\ne0$"], answer: 1, feedback: "Producto de funciones continuas es continua." },
+      { q: "Si $f(x)=x$ y $g(x)=x+1$, $(f\\cdot g)(x)$ es:", options: ["$x+1$","$x^2+x$","$x^2-1$","$2x$"], answer: 1, feedback: "Multiplica polinomios: $x(x+1)=x^2+x$." }
+    ],
+    "División de Funciones": [
+      { q: "Definición correcta de $\\left(\\dfrac{f}{g}\\right)(x)$:", options: ["$f(x)+g(x)$","$f(x)-g(x)$","$\\dfrac{f(x)}{g(x)}$","$f(x)g(x)$"], answer: 2, feedback: "Cociente punto a punto." },
+      { q: "Restricción clave del dominio:", options: ["$f(x)\ne0$","$g(x)\\ne0$","$f(x),g(x)$ definidas","Ninguna"], answer: 1, feedback: "No se puede dividir entre cero." },
+      { q: "Si $f(x)=x^2-1$ y $g(x)=x-1$, entonces $\\dfrac{f(x)}{g(x)}=$", options: ["$x+1$","$x-1$","$x^2$","$1$"], answer: 0, feedback: "Factoriza $x^2-1=(x-1)(x+1)$ → simplifica a $x+1$, con $x\ne1$." },
+      { q: "Posibles asíntotas verticales ocurren cuando:", options: ["$f(x)=0$","$g(x)=0$","$f(x)=g(x)$","$x=0$"], answer: 1, feedback: "Ceros del denominador (si no se cancelan) producen asíntotas." },
+      { q: "Dominio de $\\dfrac{x}{\\sqrt{x-2}}$ (en reales):", options: ["$x>2$","$x\\ge2$","$x\\ne2$","$x\\in\\mathbb{R}$"], answer: 0, feedback: "$x-2>0\\Rightarrow x>2$; además el denominador no puede ser 0." }
+    ],
+    "Dominio y Rango de Funciones": [
+      { q: "Dominio de $f(x)=\\sqrt{x-1}$:", options: ["$x>1$","$x\\ge1$","$x\\ne1$","$\\mathbb{R}$"], answer: 1, feedback: "El radicando debe ser $\ge0$." },
+      { q: "Rango de $f(x)=x^2$:", options: ["$\\mathbb{R}$","$(-\\infty,0]$","$[0,\\infty)$","$[1,\\infty)$"], answer: 2, feedback: "Parábola abre hacia arriba, mínimo en 0." },
+      { q: "Dominio de $f(x)=\\dfrac{1}{x}$:", options: ["$\\mathbb{R}$","$\\mathbb{R}-\\{0\\}$","$(-\\infty,0)$","$(0,\\infty)$"], answer: 1, feedback: "No definido en $x=0$." },
+      { q: "Rango de $f(x)=\\dfrac{1}{x}$:", options: ["$\\mathbb{R}$","$\\mathbb{R}-\\{0\\}$","$(-\\infty,0)$","$(0,\\infty)$"], answer: 1, feedback: "Nunca toma el valor 0." },
+      { q: "Si $f(x)=x+1$, su dominio y rango (reales) son:", options: ["$\\mathbb{R}$ y $\\mathbb{R}$","$\\mathbb{R}$ y $[0,\\infty)$","$[0,\\infty)$ y $\\mathbb{R}$","$(-\\infty,1]$ y $\\mathbb{R}$"], answer: 0, feedback: "Lineal sin restricciones → todo real a todo real." }
+    ]
+  },
+  fisica: {
+    "Momento de fuerza o torque": [
+      { q: "El torque se define como:", options: ["$\\vec{F}\\cdot\\vec{r}$","$\\vec{r}\\times\\vec{F}$","$\\vec{F}\\times\\vec{v}$","$m\\vec{a}$"], answer: 1, feedback: "Por definición $\\vec{\\tau}=\\vec{r}\\times\\vec{F}$." },
+      { q: "Unidad SI del torque:", options: ["N","N/m","N·m","J/s"], answer: 2, feedback: "Newton por metro." },
+      { q: "Si $\\vec{F}$ es colineal con $\\vec{r}$, entonces $\\tau$ es:", options: ["Máximo","Mínimo no nulo","Cero","Indeterminado"], answer: 2, feedback: "Producto vectorial nulo si vectores paralelos." },
+      { q: "Para maximizar $\\tau$ mantenemos el ángulo cercano a:", options: ["$0^\\circ$","$45^\\circ$","$90^\\circ$","$180^\\circ$"], answer: 2, feedback: "Seno máximo a 90°." },
+      { q: "El brazo de palanca correcto es:", options: ["Distancia a la línea de acción","Distancia al punto cualquiera","Radio del cuerpo","Masa"], answer: 0, feedback: "Distancia perpendicular a la línea de acción." }
+    ],
+    "Segunda condición de equilibrio": [
+      { q: "La segunda condición de equilibrio establece que:", options: ["$\\sum \\vec{F}=\\vec{0}$","$\\sum \\tau=0$","$\\sum m=0$","$\\sum v=0$"], answer: 1, feedback: "Equilibrio rotacional." },
+      { q: "Si $\\sum\\tau\\neq0$, el cuerpo:", options: ["Se traslada","Rota con aceleración angular","Permanece en reposo","Se acelera linealmente"], answer: 1, feedback: "Torque neto ≠ 0 produce rotación." },
+      { q: "Elegir el punto de giro al aplicar $\\sum\\tau=0$ es útil para:", options: ["Cambiar la masa","Eliminar fuerzas desconocidas que pasan por el pivote","Aumentar el torque","Medir energía"], answer: 1, feedback: "Fuerzas que pasan por el pivote no generan momento." },
+      { q: "En equilibrio total se cumple:", options: ["Solo $\\sum\\tau=0$","Solo $\\sum\\vec{F}=\\vec{0}$","Ambas condiciones","Ninguna"], answer: 2, feedback: "Equilibrio traslacional y rotacional." },
+      { q: "El signo del torque depende de:", options: ["Magnitud de la fuerza","Elección de sentido horario/antihorario","Sistema de unidades","Masa"], answer: 1, feedback: "Convención de signos." }
+    ],
+    "Ejercicio: segunda condición de equilibrio": [
+      { q: "Una fuerza $F_1=10\\,\\text{N}$ a $d_1=0.3\\,\\text{m}$ compensa a $F_2$ a $d_2=0.2\\,\\text{m}$. Si torques opuestos, $F_2$ es:", options: ["5 N","10 N","12 N","15 N"], answer: 3, feedback: "$F_1d_1=F_2d_2\\Rightarrow F_2=10\\cdot0.3/0.2=15$ N." },
+      { q: "Si $F=40\\,\\text{N}$ y $d=0.5\\,\\text{m}$, el torque es:", options: ["10 N·m","20 N·m","40 N·m","80 N·m"], answer: 1, feedback: "$\\tau=Fd=20$ N·m." },
+      { q: "Para anular el torque de 25 N·m con $d=0.5$ m se requiere $F$ de:", options: ["25 N","50 N","12.5 N","5 N"], answer: 1, feedback: "$F=\\tau/d=25/0.5=50$ N, sentido opuesto." },
+      { q: "Si una fuerza pasa por el pivote, su torque es:", options: ["Máximo","Igual al peso","Cero","Indeterminado"], answer: 2, feedback: "Brazo de palanca nulo." },
+      { q: "En una regla horizontal, el peso propio se aplica en:", options: ["Un extremo","Centro de masa","Donde se sostenga","No aplica"], answer: 1, feedback: "Centro geométrico si homogénea." }
+    ],
+    "Equilibrio total de cuerpos rígidos": [
+      { q: "Equilibrio total implica:", options: ["$\\sum\\vec{F}=\\vec{0}$","$\\sum\\tau=0$","Ambas","Ninguna"], answer: 2, feedback: "Sin traslación ni rotación." },
+      { q: "Si $\\sum\\vec{F}\\neq\\vec{0}$ pero $\\sum\\tau=0$:", options: ["Traslación sin rotación","Rotación sin traslación","Reposo","Imposible"], answer: 0, feedback: "Fuerza neta ≠ 0 acelera linealmente." },
+      { q: "Una viga con dos apoyos y carga central produce reacciones:", options: ["Desiguales siempre","Iguales","Cero","Indeterminadas"], answer: 1, feedback: "Simetría → reacciones iguales." },
+      { q: "Para resolver reacciones es útil tomar momentos respecto a:", options: ["El centro de masa","Un extremo","Un punto donde canceles una incógnita","Cualquier punto con fricción"], answer: 2, feedback: "Elimina incógnitas que pasan por el punto." },
+      { q: "Las ecuaciones de equilibrio en 2D son:", options: ["2","3","4","5"], answer: 1, feedback: "$\\sum F_x=0, \\sum F_y=0, \\sum \\tau=0$." }
+    ],
+    "Ejercicio de equilibrio total": [
+      { q: "Para una viga de longitud $L$ con peso $W$ centrado, las reacciones $R_A$ y $R_B$ son:", options: ["$W$ y $0$","$0$ y $W$","$W/2$ y $W/2$","Indeterminadas"], answer: 2, feedback: "Simetría y $\\sum F_y=0$." },
+      { q: "Si además cuelga una masa $P$ en el extremo B, entonces $R_B$:", options: ["Disminuye","Aumenta","No cambia","Se vuelve negativa"], answer: 1, feedback: "Momento adicional en B." },
+      { q: "Tomando momentos en A, $R_B L = W\\,\\dfrac{L}{2}$ ⇒ $R_B$:", options: ["$W$","$W/2$","$W/4$","$2W$"], answer: 1, feedback: "Resultado clásico con carga centrada." },
+      { q: "Si $R_A=300$ N y $R_B=500$ N, entonces $W$:", options: ["300 N","500 N","800 N","200 N"], answer: 2, feedback: "Equilibrio vertical: $R_A+R_B=W$." },
+      { q: "Un sistema estático con 3 fuerzas no paralelas en equilibrio requiere que sus líneas de acción:", options: ["Sean paralelas","Concurran en un punto","Sean horizontales","Ninguna"], answer: 1, feedback: "Criterio de concurrencia." }
+    ]
+  },
+  quimica: {
+    "Leyes Ponderales – Ley de Lavoisier": [
+      { q: "La Ley de Lavoisier establece que:", options: ["La masa se crea con energía","La masa total se conserva","El volumen se conserva","La energía no se conserva"], answer: 1, feedback: "Masa de reactivos = masa de productos." },
+      { q: "En $2\\,\\mathrm{H_2}+\\mathrm{O_2}\\to2\,\\mathrm{H_2O}$, si reaccionan 4 g de H2 con 32 g de O2, la masa de productos es:", options: ["32 g","36 g","28 g","4 g"], answer: 1, feedback: "Conservación: 4+32=36 g." },
+      { q: "En un sistema abierto puede no observarse masa constante porque:", options: ["Se viola la ley","Hay pérdidas/ganancias de materia","La reacción no ocurre","Se crea materia"], answer: 1, feedback: "Entrada/salida de materia altera la medición." },
+      { q: "Para verificar la ley experimentalmente conviene usar:", options: ["Recipiente cerrado","Recipiente abierto","Solo masa de productos","Solo masa de reactivos"], answer: 0, feedback: "Aísla el sistema." },
+      { q: "Si se forma gas y escapa, la masa medida de productos será:", options: ["Mayor","Igual","Menor","Impredecible"], answer: 2, feedback: "Pérdida de masa aparente por escape de gas." }
+    ],
+    "Leyes Ponderales – Ley de Dalton (proporciones múltiples)": [
+      { q: "La Ley de Dalton indica que las masas que se combinan para formar distintos compuestos guardan:", options: ["Relaciones continuas","Proporciones de enteros pequeños","Relación exponencial","No hay regla"], answer: 1, feedback: "Proporciones simples." },
+      { q: "C y O forman CO (12:16) y CO2 (12:32). La razón de O es:", options: ["1:1","1:2","2:1","3:2"], answer: 1, feedback: "16:32 = 1:2." },
+      { q: "Si 14 g de N se combinan con 16 g de O (NO) y 32 g de O (NO2), la razón de masas de O es:", options: ["1:1","1:2","2:1","1:3"], answer: 1, feedback: "16:32 = 1:2 → enteros pequeños." },
+      { q: "La ley ayuda a:", options: ["Definir fórmulas empíricas","Calcular densidad","Medir presión","Determinar pH"], answer: 0, feedback: "Base para estequiometría." },
+      { q: "Para aplicar la ley se necesita:", options: ["Temperatura constante","Mismas condiciones de presión","Una cantidad fija de uno de los elementos","Catalizador"], answer: 2, feedback: "Comparación con base fija." }
+    ],
+    "Leyes Ponderales – Ley de Proust (proporciones definidas)": [
+      { q: "La Ley de Proust establece que un compuesto puro tiene:", options: ["Composición variable","Proporción en masa constante","Solo un elemento","Geometría fija"], answer: 1, feedback: "Independiente del origen." },
+      { q: "En agua, la relación de masas H:O es:", options: ["1:1","1:2","1:8","2:1"], answer: 2, feedback: "2×1 : 16 → 1:8." },
+      { q: "Si una muestra de NaCl de Perú y otra de México se analizan, su % en masa de Na y Cl será:", options: ["Distinto","Igual","Depende del método","Indefinido"], answer: 1, feedback: "Misma proporción en masa." },
+      { q: "Ejemplo que contradice Proust:", options: ["Mezcla de arena y sal","Agua destilada","CO2 puro","NaCl puro"], answer: 0, feedback: "Mezclas no son compuestos puros." },
+      { q: "Para verificar Proust se requiere:", options: ["Medir moles de gas","Determinar % en masa de elementos","Medir energía liberada","Colorimetría"], answer: 1, feedback: "Composición constante." }
+    ],
+    "Reactivo limitante y en exceso": [
+      { q: "El reactivo limitante es el que:", options: ["Se consume al final","Se consume primero","Tiene mayor masa","Es más caro"], answer: 1, feedback: "Determina la cantidad máxima de producto." },
+      { q: "Pasos: calcular moles, dividir por coeficiente y:", options: ["Multiplicar por masa molar","Elegir el mayor","Elegir el menor","Sumar moles"], answer: 2, feedback: "El menor indica el limitante." },
+      { q: "En $2H_2+O_2\\to2H_2O$, con 4 mol H2 y 3 mol O2, el limitante es:", options: ["$H_2$","$O_2$","Ninguno","Ambos"], answer: 0, feedback: "$4/2=2$ vs $3/1=3$ → menor: H2." },
+      { q: "Si el limitante produce 5 mol de producto, los moles máximos de producto son:", options: ["5 mol","10 mol","Depende del rendimiento","0 mol"], answer: 0, feedback: "En rendimiento teórico." },
+      { q: "El reactivo en exceso es el que:", options: ["Sobran moles sin reaccionar","Se evapora","No participa","Se descompone"], answer: 0, feedback: "Queda sin consumirse totalmente." }
+    ],
+    "Ejercicio – Leyes Ponderales": [
+      { q: "Si 10 g de A reaccionan con 20 g de B para dar 25 g de AB y 5 g se pierden como gas, ¿se viola Lavoisier?", options: ["Sí","No, sistema abierto","Sí, porque falta masa","No, porque 10=20"], answer: 1, feedback: "Fuga de gas → pérdida aparente en sistema abierto." },
+      { q: "Dos compuestos de X e Y: X1Y1 (10 g X con 5 g Y) y X1Y2 (10 g X con 10 g Y). Razón de Y:", options: ["1:1","1:2","2:1","1:3"], answer: 1, feedback: "5:10=1:2 → Dalton." },
+      { q: "Un compuesto XY siempre presenta 40% X y 60% Y en masa. Esto ejemplifica:", options: ["Dalton","Proust","Lavoisier","Ideal de gases"], answer: 1, feedback: "Proporciones definidas." },
+      { q: "Si 18 g de agua se descomponen, masas de H2 y O2 son (en g):", options: ["2 y 16","1 y 17","9 y 9","4 y 14"], answer: 0, feedback: "1:8 en masa, total 18 g." },
+      { q: "Para confirmar limitante, se usa la relación:", options: ["$n/coef$","$m\\cdot M$","$M/n$","$m+n$"], answer: 0, feedback: "Comparar $n/\nu$ (coef estequiométrico)." }
+    ]
+  }
+};
+
+let __currentQuiz = { courseId: null, topicTitle: null, graded: false, answers: [], result: null };
+
+function openQuiz(courseId, topicTitle) {
+  __currentQuiz = { courseId, topicTitle, graded: false, answers: [], result: null };
+  const bank = quizBank[courseId] && quizBank[courseId][topicTitle];
+  document.getElementById('quiz-modal').style.display = 'flex';
+  document.getElementById('quiz-modal-title').textContent = `Autoevaluación – ${topicTitle}`;
+  const body = document.getElementById('quiz-body');
+
+  if (!bank) {
+    body.innerHTML = `<div class="quiz-summary">
+        <h4>No hay preguntas configuradas para este tema.</h4>
+        <p class="muted">Pide al administrador que agregue 5 preguntas para <b>${topicTitle}</b> en <code>quizBank</code>.</p>
+      </div>`;
+    if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
+    return;
+  }
+  body.innerHTML = bank.map((item, i) => `
+    <div class="quiz-question" data-index="${i}">
+      <div class="quiz-badge">Pregunta ${i+1}/5</div>
+      <h4>${item.q}</h4>
+      <div class="quiz-options">
+        ${item.options.map((opt, j) => `
+          <label class="quiz-option">
+            <input type="radio" name="q${i}" value="${j}"/>
+            <span>${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback muted" id="fb-${i}"></div>
+    </div>
+  `).join('');
+  if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
+}
+
+function gradeQuiz() {
+  const bank = quizBank[__currentQuiz.courseId] && quizBank[__currentQuiz.courseId][__currentQuiz.topicTitle];
+  if (!bank) return;
+  const answers = [];
+  let correct = 0;
+
+  bank.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const chosen = sel ? Number(sel.value) : null;
+    answers.push(chosen);
+    const fb = document.getElementById(`fb-${i}`);
+    if (chosen === null) {
+      fb.innerHTML = `<span class="incorrect">Sin respuesta.</span> <span class="muted">${item.feedback}</span>`;
+    } else if (chosen === item.answer) {
+      fb.innerHTML = `<span class="correct">Correcto ✔</span>`;
+      correct++;
+    } else {
+      fb.innerHTML = `<span class="incorrect">Incorrecto ✘</span> — <span class="muted">${item.feedback}</span>`;
+    }
+  });
+
+  const result = { total: bank.length, correct, wrong: bank.length - correct, answers };
+  __currentQuiz.graded = true;
+  __currentQuiz.answers = answers;
+  __currentQuiz.result = result;
+  showSummary(); // mostramos resumen inmediatamente después de enviar
+}
+
+function showSummary() {
+  const bank = quizBank[__currentQuiz.courseId] && quizBank[__currentQuiz.courseId][__currentQuiz.topicTitle];
+  const body = document.getElementById('quiz-body');
+  if (!bank) return;
+  const r = __currentQuiz.result || { total: bank.length, correct: 0, wrong: bank.length, answers: [] };
+
+  const list = bank.map((item, i) => {
+    const user = r.answers[i];
+    const status = user === item.answer ? 'correcto' : (user == null ? 'sin respuesta' : 'incorrecto');
+    const cls = user === item.answer ? 'correct' : 'incorrect';
+    const expected = item.options[item.answer];
+    return `<li>
+      <b>Pregunta ${i+1}:</b> <span class="${cls}">${status}</span>
+      <div class="quiz-feedback muted">Respuesta correcta: <em>${expected}</em>. ${user === item.answer ? '' : item.feedback}</div>
+    </li>`;
+  }).join('');
+
+  const html = `
+    <div class="quiz-summary">
+      <h4>Resumen de resultados</h4>
+      <p><b>Aciertos:</b> ${r.correct}/${r.total} &nbsp;|&nbsp; <b>Errores:</b> ${r.wrong}</p>
+      <ol style="margin-left: 1rem; display:grid; gap:.5rem;">${list}</ol>
+    </div>
+  `;
+
+  // Insertamos/actualizamos al principio del body del modal
+  body.insertAdjacentHTML('afterbegin', html);
+  if (window.MathJax && MathJax.typeset) { MathJax.typeset(); }
+}
+
+function resetQuiz() {
+  openQuiz(__currentQuiz.courseId, __currentQuiz.topicTitle);
+}
+
+function closeQuiz() {
+  document.getElementById('quiz-modal').style.display = 'none';
+}
 
         // Abrir tutor inteligente
         function openTutor(courseId, topicTitle) {
@@ -1239,27 +1575,6 @@ let currentRole = 'student';
 			alert('No hay tutor configurado para este curso.');
 			return;
 		  }
-
-        // Abrir resultados (solo admin): apunta a URLs de Drive por curso
-        function openResults(courseId, topicTitle) {
-            const driveResults = {
-                matematicas: 'https://drive.google.com/your-math-results',
-                fisica: 'https://drive.google.com/your-physics-results',
-                quimica: 'https://drive.google.com/your-chem-results'
-            };
-            const url = driveResults[courseId];
-            if (url) {
-                window.open(url, '_blank', 'noopener,noreferrer');
-            } else {
-                alert('Resultados no configurados aún para este curso.');
-            }
-        }
-
-        // Descargar registro de actividad (panel admin)
-        function descargarRegistro() {
-            const url = 'https://drive.google.com/your-admin-activity-export';
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
 		  window.open(url, '_blank', 'noopener,noreferrer');
 		}
 
@@ -1277,7 +1592,74 @@ let currentRole = 'student';
                 document.getElementById('login-page').style.display = 'flex';
             }
         }
-    </script>
+    
+/* ====== ENDPOINTS: reemplaza por tus Web Apps de Apps Script ====== */
+const ADMIN_ENDPOINTS = {
+  actividad: 'https://script.google.com/macros/s/AKfycbx_ACTIVIDAD/exec?tipo=actividad',
+  resultados: {
+    mate: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=matematica',
+    fisi: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=fisica',
+    quim: 'https://script.google.com/macros/s/AKfycbx_RESULTADOS/exec?curso=quimica'
+  }
+};
+
+/* Inyecta enlaces en todos los menús Acciones presentes en el DOM */
+function initAdminMenus() {
+  document.querySelectorAll('.admin-actions-menu').forEach(menu => {
+    const aActividad = menu.querySelector('a[data-link="actividad"]');
+    const aMate = menu.querySelector('a[data-link="mate"]');
+    const aFisi = menu.querySelector('a[data-link="fisi"]');
+    const aQuim = menu.querySelector('a[data-link="quim"]');
+
+    if (aActividad) aActividad.href = ADMIN_ENDPOINTS.actividad;
+    if (aMate) aMate.href = ADMIN_ENDPOINTS.resultados.mate;
+    if (aFisi) aFisi.href = ADMIN_ENDPOINTS.resultados.fisi;
+    if (aQuim) aQuim.href = ADMIN_ENDPOINTS.resultados.quim;
+  });
+}
+
+/* Muestra/Oculta menús Acciones según rol */
+function setAdminMenusVisible(visible) {
+  document.querySelectorAll('.admin-actions-menu')
+    .forEach(m => m.style.display = visible ? 'inline-block' : 'none');
+}
+
+/* Al cargar el documento, inicializa menús (por si ya estás en dashboard) */
+document.addEventListener('DOMContentLoaded', () => {
+  initAdminMenus();
+  // Intento de leer rol si ya existiera
+  try {
+    const roleStored = localStorage.getItem('role');
+    if (roleStored === 'admin') setAdminMenusVisible(true);
+  } catch(e){}
+});
+
+/* Hook tras login (sin alterar tu lógica) */
+(function wireAdminMenusAfterLogin(){
+  const form = document.getElementById('login-form');
+  if (!form) return;
+  form.addEventListener('submit', () => {
+    setTimeout(() => {
+      const isAdmin = (typeof currentRole !== 'undefined' && currentRole === 'admin') || localStorage.getItem('role') === 'admin';
+      if (isAdmin) {
+        initAdminMenus();
+        setAdminMenusVisible(true);
+      } else {
+        setAdminMenusVisible(false);
+      }
+    }, 60);
+  });
+})();
+
+/* Hook al entrar a un curso (la página de curso tiene otro header) */
+const __originalShowCourse = showCourse;
+showCourse = function(courseId){
+  __originalShowCourse(courseId);
+  const isAdmin = (typeof currentRole !== 'undefined' && currentRole === 'admin') || localStorage.getItem('role') === 'admin';
+  initAdminMenus();          // el header de curso se inyecta dinámicamente
+  setAdminMenusVisible(isAdmin);
+};
+</script>
 
 	<script>
 	  // Toggle de modo oscuro con persistencia + cambio de icono
@@ -1305,5 +1687,24 @@ let currentRole = 'student';
 	</script>
 
 	
+
+<!-- Modal Autoevaluación -->
+<div id="quiz-modal" aria-hidden="true">
+  <div class="quiz-card" role="dialog" aria-modal="true" aria-labelledby="quiz-modal-title">
+    <div class="quiz-header">
+      <div class="quiz-title" id="quiz-modal-title">Autoevaluación</div>
+      <button class="quiz-close" onclick="closeQuiz()" aria-label="Cerrar">×</button>
+    </div>
+    <div class="quiz-body" id="quiz-body">
+      <!-- contenido dinámico -->
+    </div>
+    <div class="quiz-footer">
+      <button class="btn-quiz ghost" onclick="showSummary()">Mostrar resultados</button>
+      <button class="btn-quiz secondary" onclick="resetQuiz()">Reiniciar</button>
+      <button class="btn-quiz primary" onclick="gradeQuiz()">Enviar respuestas</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
