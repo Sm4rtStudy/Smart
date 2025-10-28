@@ -30,6 +30,10 @@
         body.dark-mode .course-header-nav {
             background: #242424;
             color: #f0f0f0;
+        
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         body.dark-mode .logo-section h1,
@@ -1359,6 +1363,9 @@ function SS_track(event, extra = {
 
         // Mostrar curso
         function showCourse(courseId) {
+            // Forzar scroll al tope al cambiar de vista
+            window.scrollTo({ top: 0, behavior: "auto" });
+
             const course = coursesContent[courseId];
             document.getElementById('dashboard-page').style.display = 'none';
             document.getElementById('course-detail-page').style.display = 'block';
@@ -1384,6 +1391,9 @@ function SS_track(event, extra = {
 
         // Volver al dashboard
         function backToDashboard() {
+            // Forzar scroll al tope al cambiar de vista
+            window.scrollTo({ top: 0, behavior: "auto" });
+
             document.getElementById('course-detail-page').style.display = 'none';
             document.getElementById('dashboard-page').style.display = 'block';
         }
@@ -2019,10 +2029,3 @@ showCourse = function(courseId){
 
 </body>
 </html>
-
-
-
-
-
-
-
